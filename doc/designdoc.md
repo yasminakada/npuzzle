@@ -28,4 +28,4 @@ The puzzle will be played in this screen. The pieces can be moved bij sliding to
 ### AddHighscorescreen
 When the player's score is a highscore, the player needs to insert his/her name in this screen. This screen goes to show the highscorescreen afterwards.
 
-![Screen to screen overview](https://raw.githubusercontent.com/yasminakada/npuzzle/master/puzzle_screens.jpg)
+![Screen to screen overview](https://raw.githubusercontent.com/yasminakada/npuzzle/master/doc/puzzle_screens.jpg)
