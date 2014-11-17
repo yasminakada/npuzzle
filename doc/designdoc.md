@@ -53,9 +53,9 @@ For the game a class is needed which builds the puzzle and keeps track of the us
 ![Screen to screen overview](https://raw.githubusercontent.com/yasminakada/npuzzle/master/puzzle_screens.jpg)
 *The image is not up to date*
 
-Extra screens and classes
--------------------------
-The following screens and classes are just an extra and are not part of the actual assingment. However it might be nice to include them in the app.
+###Extra screens and classes
+
+The following screens and classes are just an extra and are not part of the actual assignment. However it might be nice to include them in the app.
 
 #### Highscorescreen:
 Shows the top 3 of the highest scores. Going back to the mainscreen is the only activity.
@@ -65,3 +65,10 @@ Shows the top 3 of the highest scores. Going back to the mainscreen is the only 
 #### AddHighscorescreen
 When the player's score is a highscore, the player needs to insert his/her name in this screen. This screen goes to show the highscorescreen afterwards.
 + Editable textfield for the name, on the 
+
+API and frameworks
+------------------
+I expect using the API's
++ 
+
+
