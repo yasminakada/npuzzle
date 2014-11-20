@@ -1,19 +1,31 @@
 package projects.mprog.nl.npuzzle10001567;
 
-import android.support.v7.app.ActionBarActivity;
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends Activity implements OnClickListener{
+    Button play;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        play = (Button) findViewById(R.id.playbutton);
+        play.setOnClickListener(this);
     }
 
+    @Override
+    public void onClick(View v) {
+    goToLevel(v);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -35,5 +47,12 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void goToLevel(View v) {
+        // OWN
+        Log.d("BUTTON CLICK", v.getId() + "- was clicked.");
+        Intent i = new Intent(this, LevelActivity.class);
+        startActivity(i);
     }
 }
