@@ -6,10 +6,11 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme" >
         <activity
             android:name="projects.mprog.nl.npuzzle10001567.MainActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -17,8 +18,20 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".LevelActivity"
+            android:name="projects.mprog.nl.npuzzle10001567.LevelActivity"
             android:label="@string/title_activity_level" >
+        </activity>
+        <activity
+            android:name="projects.mprog.nl.npuzzle10001567.ImagepickActivity"
+            android:label="@string/title_activity_imagepick" >
+        </activity>
+        <activity
+            android:name="projects.mprog.nl.npuzzle10001567.PuzzleActivity"
+            android:label="@string/title_activity_puzzle" >
+        </activity>
+        <activity
+            android:name="projects.mprog.nl.npuzzle10001567.WinActivity"
+            android:label="@string/title_activity_win" >
         </activity>
     </application>
 

@@ -1,36 +1,32 @@
 package projects.mprog.nl.npuzzle10001567;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
+import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
 
 
-public class MainActivity extends Activity implements OnClickListener{
-    Button play;
+public class PuzzleActivity extends Activity implements View.OnClickListener {
+    Button winButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        play = (Button) findViewById(R.id.playbutton);
-        play.setOnClickListener(this);
+        setContentView(R.layout.activity_puzzle);
+        winButton = (Button) findViewById(R.id.button_win);
+        winButton.setOnClickListener(this);
     }
 
-    @Override
-    public void onClick(View v) {
-        goToLevel(v);
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_puzzle, menu);
         return true;
     }
 
@@ -49,10 +45,17 @@ public class MainActivity extends Activity implements OnClickListener{
         return super.onOptionsItemSelected(item);
     }
 
-    public void goToLevel(View v) {
-        // OWN
-        Log.d("BUTTON CLICK", v.getId() + "- was clicked.");
-        Intent i = new Intent(this, LevelActivity.class);
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == R.id.button_win){
+            // show win activity
+            goToWin(v);
+        }
+    }
+
+    public void goToWin(View v) {
+        Intent i = new Intent(this,WinActivity.class);
         startActivity(i);
     }
+
 }

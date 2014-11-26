@@ -4,54 +4,38 @@ import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.Toast;
+import android.widget.ImageButton;
 
 
-public class LevelActivity extends Activity implements OnClickListener {
-    Button easy;
-    Button medium;
-    Button hard;
+public class ImagepickActivity extends Activity implements OnClickListener{
+    ImageButton mountains_button;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_level);
-        easy = (Button) findViewById(R.id.button_easy);
-        easy.setOnClickListener(this);
-
-        medium = (Button) findViewById(R.id.button_medium);
-        medium.setOnClickListener(this);
-
-        hard = (Button) findViewById(R.id.button_hard);
-        hard.setOnClickListener(this);
+        setContentView(R.layout.activity_imagepick);
+        mountains_button = (ImageButton) findViewById(R.id.imageButtonMountains);
+        mountains_button.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
-        String dif = "THIS IS TEMP";
-        Log.d("DEB","ONCLICK has been called");
-        if (v.getId() == R.id.button_easy){
-            dif = "EASY";
+        String imagePicked = null;
+        if (v.getId() == R.id.imageButtonMountains){
+            imagePicked = "mountains";
         }
-        else if (v.getId() == R.id.button_medium){
-            dif = "MEDIUM";
-        }
-        else if (v.getId() == R.id.button_hard) {
-            dif = "HARD";
-        }
-        showToast(v,dif);
+        goToPuzzle(v,imagePicked);
+
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_level, menu);
+        getMenuInflater().inflate(R.menu.menu_imagepick, menu);
         return true;
     }
 
@@ -70,10 +54,9 @@ public class LevelActivity extends Activity implements OnClickListener {
         return super.onOptionsItemSelected(item);
     }
 
-    public void showToast(View v, String level) {
-        Toast t = Toast.makeText(this, "You have chosen difficulty: " + level ,Toast.LENGTH_SHORT);
-        t.show();
-        Intent i = new Intent(this,ImagepickActivity.class);
+    public void goToPuzzle(View v, String imageName){
+        Intent i = new Intent(this,PuzzleActivity.class);
         startActivity(i);
+
     }
 }
