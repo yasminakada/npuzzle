@@ -8,5 +8,7 @@
     <string name="title_activity_imagepick">ImagepickActivity</string>
     <string name="title_activity_puzzle">PuzzleActivity</string>
     <string name="title_activity_win">WinActivity</string>
+    <string name="tv_dimensions">DIMENSIONS:</string>
+    <string name="tv_pickimage">Pick an image</string>
 
 </resources>

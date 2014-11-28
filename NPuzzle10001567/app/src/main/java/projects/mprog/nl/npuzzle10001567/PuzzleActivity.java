@@ -3,16 +3,21 @@ package projects.mprog.nl.npuzzle10001567;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 
 public class PuzzleActivity extends Activity implements View.OnClickListener {
     Button winButton;
+    String imageName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,8 +25,17 @@ public class PuzzleActivity extends Activity implements View.OnClickListener {
         setContentView(R.layout.activity_puzzle);
         winButton = (Button) findViewById(R.id.button_win);
         winButton.setOnClickListener(this);
-    }
 
+        Bundle gotImage = getIntent().getExtras();
+        imageName = gotImage.getString("image");
+
+        String uri = "@drawable/" + imageName + ".jpg";
+        Log.d("draw",uri);
+        int imageResource = getResources().getIdentifier(uri, null, getPackageName());
+        ImageView iv = (ImageView) findViewById(R.id.imageView);
+        Drawable res = getResources().getDrawable(imageResource);
+        iv.setImageDrawable(res);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

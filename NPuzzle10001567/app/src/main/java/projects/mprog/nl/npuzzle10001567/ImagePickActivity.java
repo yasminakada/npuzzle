@@ -2,31 +2,45 @@ package projects.mprog.nl.npuzzle10001567;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 
 public class ImagepickActivity extends Activity implements OnClickListener{
-    ImageButton mountains_button;
+    ImageButton ibApple;
+    ImageButton ibPear;
+    int dim;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_imagepick);
-        mountains_button = (ImageButton) findViewById(R.id.imageButtonMountains);
-        mountains_button.setOnClickListener(this);
+
+        ibApple = (ImageButton) findViewById(R.id.ibApple);
+        ibApple.setOnClickListener(this);
+
+        ibPear = (ImageButton) findViewById(R.id.ibPear);
+        ibPear.setOnClickListener(this);
+
+        Bundle gotLevel = getIntent().getExtras();
+        dim = gotLevel.getInt("dimensions");
+        String dimStr = Integer.toString(dim);
+        TextView tv = (TextView) findViewById(R.id.textViewDimensions);
+        tv.setText("The board will be " + dimStr + " x " + dimStr);  // should be in the strings part also...
     }
 
     @Override
     public void onClick(View v) {
         String imagePicked = null;
-        if (v.getId() == R.id.imageButtonMountains){
-            imagePicked = "mountains";
+        if (v.getId() == R.id.ibApple){
+            imagePicked = "apple";
+        }else if(v.getId() == R.id.ibPear){
+            imagePicked = "pear";
         }
         goToPuzzle(v,imagePicked);
 
@@ -56,6 +70,9 @@ public class ImagepickActivity extends Activity implements OnClickListener{
 
     public void goToPuzzle(View v, String imageName){
         Intent i = new Intent(this,PuzzleActivity.class);
+        Bundle pickedImage = new Bundle();
+        pickedImage.putString("image", imageName);
+        i.putExtras(pickedImage);
         startActivity(i);
 
     }
