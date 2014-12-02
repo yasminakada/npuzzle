@@ -2,7 +2,12 @@ package projects.mprog.nl.npuzzle10001567;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Point;
+import android.os.Build;
 import android.os.Bundle;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,19 +17,58 @@ import android.widget.TextView;
 
 
 public class ImagepickActivity extends Activity implements OnClickListener{
-    ImageButton ibApple;
     ImageButton ibPear;
+    ImageButton ibApple;
     int dim;
+    int scrWidth;
+    int scrHeight;
+    Bitmap bmpApple;
+    Bitmap bmpPear;
+    Bitmap bmpAppleSmall;
+    Bitmap bmpPearSmall;
+    Double smallRatio = 0.2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_imagepick);
 
+        // Getting the screen size of the device,
+        if (Build.VERSION.SDK_INT >= 13){
+            Display display = getWindowManager().getDefaultDisplay();
+            Point size = new Point();
+            display.getSize(size);
+            scrWidth = size.x;
+            scrHeight = size.y;
+        }else{
+            Display display = getWindowManager().getDefaultDisplay();
+            scrWidth = display.getWidth();
+            scrHeight = display.getHeight();
+        }
+
+//        ibApple = (ImageButton) findViewById(R.id.ibApple);
+//        ibApple.setOnClickListener(this);
+//
+//        ibPear = (ImageButton) findViewById(R.id.ibPear);
+//        ibPear.setOnClickListener(this);
+
+        bmpApple = BitmapFactory.decodeResource(getResources(),R.drawable.apple);
+        bmpPear = BitmapFactory.decodeResource(getResources(),R.drawable.pear);
+        double d = scrHeight*smallRatio;
+        int buttonSize = (int)d;
+        bmpAppleSmall = Bitmap.createScaledBitmap(bmpApple,buttonSize, buttonSize, true);
+        bmpPearSmall = Bitmap.createScaledBitmap(bmpPear,buttonSize, buttonSize, true);
+
+        // These bitmaps will be passed to PuzzleActivity together with the dimensions
+        bmpApple = Bitmap.createScaledBitmap(bmpApple,scrHeight, scrHeight, true);
+        bmpPear = Bitmap.createScaledBitmap(bmpPear,scrHeight, scrHeight, true);
+
         ibApple = (ImageButton) findViewById(R.id.ibApple);
+        ibApple.setImageBitmap(bmpAppleSmall);
         ibApple.setOnClickListener(this);
 
         ibPear = (ImageButton) findViewById(R.id.ibPear);
+        ibPear.setImageBitmap(bmpPearSmall);
         ibPear.setOnClickListener(this);
 
         Bundle gotLevel = getIntent().getExtras();
@@ -43,7 +87,6 @@ public class ImagepickActivity extends Activity implements OnClickListener{
             imagePicked = "pear";
         }
         goToPuzzle(v,imagePicked);
-
     }
 
     @Override
@@ -69,10 +112,11 @@ public class ImagepickActivity extends Activity implements OnClickListener{
     }
 
     public void goToPuzzle(View v, String imageName){
-        Intent i = new Intent(this,PuzzleActivity.class);
-        Bundle pickedImage = new Bundle();
-        pickedImage.putString("image", imageName);
-        i.putExtras(pickedImage);
+        Intent i = new Intent(this,PuzzleActivity.class); // PuzzleActivity doet het niet
+        Bundle bundle = new Bundle();
+        bundle.putString("image", imageName);
+        bundle.putInt("dim",dim);
+        i.putExtras(bundle);
         startActivity(i);
 
     }
