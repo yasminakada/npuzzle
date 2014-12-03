@@ -15,6 +15,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
+
 
 public class PuzzleActivity extends Activity implements View.OnClickListener {
     Button winButton;
@@ -70,8 +73,12 @@ public class PuzzleActivity extends Activity implements View.OnClickListener {
         }catch(Exception e){
             Log.d("PRINT", "<><> FAILED STRING COMPARE");
         }
-
-//        int[][] array = Puzzle.getArray(dim);
+        //internal puzzle
+        Puzzle game = new Puzzle();
+        game.start(dim);
+        Log.d("GAMECHECK", Arrays.deepToString(game.puzzleArray));
+        game.shuffle(100); // could also be used to change difficulty.
+        Log.d("GAMECHECK", Arrays.deepToString(game.puzzleArray));
 
     }
 

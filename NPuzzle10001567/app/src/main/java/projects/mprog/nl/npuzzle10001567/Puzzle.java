@@ -1,5 +1,7 @@
 package projects.mprog.nl.npuzzle10001567;
 
+import android.util.Log;
+
 import java.util.Random;
 
 /**
@@ -8,13 +10,13 @@ import java.util.Random;
 public class Puzzle {
     int row0 = -1; // indicates where the zero is
     int col0 = -1; // indicates where the zero is
-    int[][] puzzleArray = new int[0][];
     int dim;
+    int[][] puzzleArray;
 
     public void start(int dimensions){
         int counter = 1;
         dim = dimensions;
-
+        puzzleArray = new int[dim][dim];
         // set row0 col0 for empty tile at start of the game:
         row0 = dim-1;
         col0 = dim-1;
@@ -29,21 +31,21 @@ public class Puzzle {
             }
         }
     }
-    public void shuffleArray(int swaps) {
+    public void shuffle(int swaps) {
         Random rand = new Random();
         int r = 0;
         int row = row0;
         int col = col0;
 
         for (int j = 0; j < swaps; j++) {
-            r = rand.nextInt(1);
+            r = rand.nextInt(2);
             if (r == 0) {
                 if (row == 0) {
                     row++;
-                } else if (row == 2) {
+                } else if (row == dim-1) {
                     row--;
                 } else {
-                    r = rand.nextInt(1);
+                    r = rand.nextInt(2);
                     if (r == 0) {
                         row--;
                     } else {
@@ -53,10 +55,10 @@ public class Puzzle {
             } else {
                 if (col == 0) {
                     col++;
-                } else if (col == 2) {
+                } else if (col == dim-1){
                     col--;
                 } else {
-                    r = rand.nextInt(1);
+                    r = rand.nextInt(2);
                     if (r == 0) {
                         col--;
                     } else {
