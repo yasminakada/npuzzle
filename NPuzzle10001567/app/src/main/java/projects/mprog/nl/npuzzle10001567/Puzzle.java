@@ -96,45 +96,4 @@ public class Puzzle {
         return false;
     }
 
-//     GARBAGE:
-//    public boolean checkSwap(int row, int col){
-//        // checks if a tile can be swapped with the empty tile
-//        // only when it is adjacent to the empty tile
-//        // returns true if a swap can take place
-//
-//        if (puzzleArray[row][col] == 0) {
-//            return true;
-//        }
-//        return false;
-//    }
-
-//        GARBAGE:
-//    public void swapTile(int row, int col, int dim){
-//        int v = puzzleArray[row][col];
-//
-//        for (int i = row-1; i<row+3; i =i+2){
-//            if(i > 0 && i < dim){
-//                if (checkSwap(i,col)){
-//                    puzzleArray[row][col] = 0;
-//                    row0 = row;
-//                    col0 = col;
-//                    puzzleArray[i][col]= v;
-//                    return;
-//                }
-//            }
-//        }
-//        for (int i = col-1; i<col+3; i =i+2){
-//            if(i > 0 && i < dim){
-//                if (checkSwap(row,i)){
-//                    puzzleArray[row][col] = 0;
-//                    row0 = row;
-//                    col0 = col;
-//                    puzzleArray[row][i]= v;
-//                    return;
-//                }
-//            }
-//        }
-//    }
-//
-
 }
