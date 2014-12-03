@@ -71,7 +71,7 @@ public class PuzzleActivity extends Activity implements View.OnClickListener {
             Log.d("PRINT", "<><> FAILED STRING COMPARE");
         }
 
-        int[][] array = Puzzle.getArray(dim);
+//        int[][] array = Puzzle.getArray(dim);
 
     }
 
