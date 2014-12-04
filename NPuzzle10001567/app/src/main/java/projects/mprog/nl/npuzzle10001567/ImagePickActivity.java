@@ -106,7 +106,7 @@ public class ImagepickActivity extends Activity implements OnClickListener{
     }
 
     public void goToPuzzle(View v, int resId){
-        Intent i = new Intent(this,PuzzleActivity.class); // PuzzleActivity doet het niet
+        Intent i = new Intent(this,PuzzleActivity.class);
         Bundle bundle = new Bundle();
         bundle.putInt("resId", resId);
         bundle.putInt("dim",dim);

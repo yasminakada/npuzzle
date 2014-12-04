@@ -1,6 +1,7 @@
 package projects.mprog.nl.npuzzle10001567;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
@@ -36,6 +37,7 @@ public class PuzzleActivity extends Activity implements View.OnClickListener {
     int resId;
     ImageView iv;
     Button shuffleButton;
+    Button resetButton;
     Puzzle puzzle = new Puzzle();
 
     BitmapFactory.Options options = new BitmapFactory.Options();
@@ -54,18 +56,35 @@ public class PuzzleActivity extends Activity implements View.OnClickListener {
         tinybmp = BitmapFactory.decodeResource(getResources(),R.drawable.pear);
         changebmp = BitmapFactory.decodeResource(getResources(),R.drawable.apple);
 
-        shuffleButton = (Button) findViewById(R.id.button);
+        shuffleButton = (Button) findViewById(R.id.buttonShuffle);
         shuffleButton.setOnClickListener(this);
+        shuffleButton.setVisibility(View.INVISIBLE);
+
+        resetButton = (Button) findViewById(R.id.buttonReset);
+        resetButton.setOnClickListener(this);
+        resetButton.setVisibility(View.INVISIBLE);
 
 
         initializeAll(); // will set up all starting variables from putExtras and screen width height
 //        initializeTable();
+
         timer = new Thread(){
             public void run(){
                 try{
-                    sleep(5000);
+                    sleep(3000);
                     Log.d("TEST","SLEEP ENDED");
                     canPlay = true;
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            doShuffle();
+                            shuffleButton.setVisibility(View.VISIBLE);
+                            resetButton.setVisibility(View.VISIBLE);
+
+                        }
+                    });
 
                 }catch(InterruptedException e){
                     e.printStackTrace();
@@ -90,6 +109,8 @@ public class PuzzleActivity extends Activity implements View.OnClickListener {
         TableLayout tableLayout = (TableLayout) findViewById(R.id.tablelayout);
         tableLayout.invalidate();
     }
+
+
 
     public Bitmap[] devideBitmap(Bitmap bmp, int dim, int imgSize){
         int counter = 1;
@@ -132,13 +153,13 @@ public class PuzzleActivity extends Activity implements View.OnClickListener {
 
     }
 
-    public void initializeTable(){
+    public void initializeTable() {
         int counter = 1;
-        bmp = BitmapFactory.decodeResource(getResources(),resId);
-        double resizeWidth= 0.8 * scrWidth;
+        bmp = BitmapFactory.decodeResource(getResources(), resId);
+        double resizeWidth = 0.8 * scrWidth;
         int newWidth = (int) resizeWidth;
-        bmp = BitmapConstruct.scaledBitmap(bmp,newWidth);
-        tiles = devideBitmap(bmp,dim,newWidth);
+        bmp = BitmapConstruct.scaledBitmap(bmp, newWidth);
+        tiles = devideBitmap(bmp, dim, newWidth);
 
         for (int i = 0; i < dim; i++) {
 
@@ -155,51 +176,17 @@ public class PuzzleActivity extends Activity implements View.OnClickListener {
                 image.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT));
                 image.setId(counter);
                 image.setImageBitmap(tiles[counter]);
-                int pad =2;
-                image.setPadding(pad,pad,pad,pad);
-//                image.setClickable(true);
+                int pad = 2;
+                image.setPadding(pad, pad, pad, pad);
                 image.setOnClickListener(this);
                 counter++;
                 tableRow.addView(image);
 
             }
-//            // Creation textView
-//            final TextView text = new TextView(this);
-//            text.setText("Test" + i);
-//            text.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT));
 
-//            // Creation  button
-//            final Button button = new Button(this);
-//            button.setText("Delete");
-//            button.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT));
-//            button.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    final TableRow parent = (TableRow) v.getParent();
-//                    tableLayout.removeView(parent);
-//                }
-//            });
-
-
-//            tableRow.addView(text);
-//            tableRow.addView(button);
 
             tableLayout.addView(tableRow);
         }
-//        // testing tile change
-//        ImageView temp1 = (ImageView) findViewById(dim*dim-1);
-//        ImageView temp2 = (ImageView) findViewById(0);
-//
-//        Bitmap bitmap1 = ((BitmapDrawable)temp1.getDrawable()).getBitmap();
-//        Bitmap bitmap2 = ((BitmapDrawable)temp1.getDrawable()).getBitmap();
-//
-//        if (temp1==null){
-//            Log.d("TEST","temp1 is null");
-//        }else {
-//            temp1.setImageBitmap(bitmap2);
-//            temp2.setImageBitmap(bitmap1);
-//        }
-
     }
 
     public void resetTiles() {
@@ -248,9 +235,11 @@ public class PuzzleActivity extends Activity implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.button){
+        if (v.getId() == R.id.buttonShuffle){
             // show win activity
             doShuffle();
+        }else if(v.getId() == R.id.buttonReset){
+            puzzle.puzzleArray = puzzle.resetStart();
         }else if (canPlay){
 
             int imageViewId = v.getId();
@@ -259,15 +248,63 @@ public class PuzzleActivity extends Activity implements View.OnClickListener {
             Log.d("TEST","" + b);
             if (b == true){
                 resetTiles();
+                if(puzzle.checkWin()){
+                    goToWin();
+                }
             }
         }
     }
 
-    public void doShuffle() {
-       puzzle.shuffle(150);
-       resetTiles();
+    private void goToWin() {
+        final Intent i = new Intent(this,WinActivity.class);
+        Thread lastAppear = new Thread(){
+            public void run(){
+                try{
+                    canPlay = false;
+                    sleep(500);
+                    Log.d("TEST","SLEEP ENDED");
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                                ImageView lastTile = (ImageView) findViewById(0);
+                                lastTile.setVisibility(View.VISIBLE);
+                                shuffleButton.setVisibility(View.INVISIBLE);
+                                resetButton.setVisibility(View.INVISIBLE);
+                                tableLayout.invalidate();
+                        }
+                    });
+
+                }catch(InterruptedException e){
+                    e.printStackTrace();
+                    Log.d("TEST","CAUGHT EXCPETION");
+                }
+            }
+
+        };lastAppear.start();
+        Thread win = new Thread(){
+            public void run(){
+                try{
+                    canPlay = false;
+                    sleep(2000);
+                    Log.d("TEST","SLEEP ENDED");
+
+                }catch(InterruptedException e){
+                    e.printStackTrace();
+                    Log.d("TEST","CAUGHT EXCPETION");
+                }finally {
+                    startActivity(i);
+                }
+            }
+
+        };win.start();
+
     }
 
+    public void doShuffle() {
+       puzzle.shuffle(25);
+       resetTiles();
+    }
 
     public void initializeAll() {
         // Getting the screen size of the device,
@@ -302,27 +339,5 @@ public class PuzzleActivity extends Activity implements View.OnClickListener {
             Log.d("TEST", "<><> Failed setting image");
         }
 
-    }
-}
-class Adapter extends BaseAdapter{
-
-    @Override
-    public int getCount() {
-        return 0;
-    }
-
-    @Override
-    public Object getItem(int position) {
-        return null;
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return 0;
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        return null;
     }
 }
