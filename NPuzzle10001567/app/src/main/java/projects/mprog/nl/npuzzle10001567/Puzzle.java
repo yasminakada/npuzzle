@@ -2,6 +2,7 @@ package projects.mprog.nl.npuzzle10001567;
 
 import android.util.Log;
 
+import java.util.Arrays;
 import java.util.Random;
 
 /**
@@ -12,11 +13,13 @@ public class Puzzle {
     int col0 = -1; // indicates where the zero is
     int dim;
     int[][] puzzleArray;
+    int[][] winArray;
 
     public void start(int dimensions){
         int counter = 1;
         dim = dimensions;
         puzzleArray = new int[dim][dim];
+        winArray = new int[dim][dim];
         // set row0 col0 for empty tile at start of the game:
         row0 = dim-1;
         col0 = dim-1;
@@ -24,6 +27,7 @@ public class Puzzle {
         for (int i=0; i < dim; i++){
             for (int j=0; j < dim; j++){
                 puzzleArray[i][j] =  counter;
+                winArray[i][j] =  counter;
                 counter++;
                 if (counter == dim*dim){
                     counter = 0;
@@ -71,6 +75,7 @@ public class Puzzle {
     }
 
     public void swapEmpty(int row, int col){
+        // focussed on swapping from the empty tile. Is used for shuffling.
         int v = puzzleArray[row][col];
         puzzleArray[row][col] = 0;
         puzzleArray[row0][col0]= v;
@@ -79,7 +84,15 @@ public class Puzzle {
 
     }
 
-    public void swap(int row, int col){
+    public boolean clickSwap(int imageViewId){
+        int[] pos = findPosition(imageViewId);
+        int row = pos[0];
+        int col = pos[1];
+        boolean b = swap(row,col);
+        return b;
+    }
+
+    public boolean swap(int row, int col){
         int v = puzzleArray[row][col];
 
         if (checkSwap(row,col)){
@@ -87,15 +100,49 @@ public class Puzzle {
             puzzleArray[row0][col0]= v;
             row0 = row;
             col0 = col;
-        }
-    }
-
-    public boolean checkSwap(int row, int col){
-        if ((row0 == row && (col0 == col -1 || col0 == col+1)||
-                (col0 == col && (row0 == row -1 || row0 == row+1)))){
             return true;
         }
         return false;
     }
 
+    public boolean checkSwap(int row, int col){
+        Log.d("TEST", "Row=" + row + "Col=" + col);
+        Log.d("TEST", "Row0=" + row0 + "Col0=" + col0);
+        if ((row0 == row && (col0 == col -1 || col0 == col+1)||
+                (col0 == col && (row0 == row -1 || row0 == row+1)))){
+            Log.d("TEST", "Should be able to swap");
+            return true;
+        }
+        return false;
+    }
+
+    public int[] findPosition(int imageViewId){
+        int[] pos = new int[2];
+        int counter = 1;
+        for (int i=0; i < dim; i++) {
+            for (int j = 0; j < dim; j++) {
+                if(counter == imageViewId){
+                    pos[0] = i;
+                    pos[1] = j;
+                    return pos;
+                }
+                counter++;
+                if (counter == dim * dim){
+                    counter = 0;
+                }
+
+            }
+        }
+        return pos;
+    }
+
+    public boolean checkWin(){
+        if (Arrays.deepEquals(puzzleArray,winArray)){
+            return true;
+        }
+        return false;
+    }
+    public int[][] resetStart(){
+        return winArray;
+    }
 }

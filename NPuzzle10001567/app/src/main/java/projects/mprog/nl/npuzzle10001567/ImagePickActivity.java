@@ -46,12 +46,6 @@ public class ImagepickActivity extends Activity implements OnClickListener{
             scrHeight = display.getHeight();
         }
 
-//        ibApple = (ImageButton) findViewById(R.id.ibApple);
-//        ibApple.setOnClickListener(this);
-//
-//        ibPear = (ImageButton) findViewById(R.id.ibPear);
-//        ibPear.setOnClickListener(this);
-
         bmpApple = BitmapFactory.decodeResource(getResources(),R.drawable.apple);
         bmpPear = BitmapFactory.decodeResource(getResources(),R.drawable.pear);
         double d = scrHeight*smallRatio;
@@ -80,11 +74,11 @@ public class ImagepickActivity extends Activity implements OnClickListener{
 
     @Override
     public void onClick(View v) {
-        String imagePicked = null;
+        int imagePicked = R.drawable.apple;
         if (v.getId() == R.id.ibApple){
-            imagePicked = "apple";
+            imagePicked = R.drawable.apple;
         }else if(v.getId() == R.id.ibPear){
-            imagePicked = "pear";
+            imagePicked = R.drawable.pear;
         }
         goToPuzzle(v,imagePicked);
     }
@@ -111,10 +105,10 @@ public class ImagepickActivity extends Activity implements OnClickListener{
         return super.onOptionsItemSelected(item);
     }
 
-    public void goToPuzzle(View v, String imageName){
+    public void goToPuzzle(View v, int resId){
         Intent i = new Intent(this,PuzzleActivity.class); // PuzzleActivity doet het niet
         Bundle bundle = new Bundle();
-        bundle.putString("image", imageName);
+        bundle.putInt("resId", resId);
         bundle.putInt("dim",dim);
         i.putExtras(bundle);
         startActivity(i);
