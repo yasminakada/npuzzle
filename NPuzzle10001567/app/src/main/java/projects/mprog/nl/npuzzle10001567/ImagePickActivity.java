@@ -1,18 +1,24 @@
 package projects.mprog.nl.npuzzle10001567;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 
@@ -27,6 +33,7 @@ public class ImagepickActivity extends Activity implements OnClickListener{
     Bitmap bmpAppleSmall;
     Bitmap bmpPearSmall;
     Double smallRatio = 0.2;
+    int[] mapIdToRes = new int[12];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +52,7 @@ public class ImagepickActivity extends Activity implements OnClickListener{
             scrWidth = display.getWidth();
             scrHeight = display.getHeight();
         }
+        setAll();
 
         bmpApple = BitmapFactory.decodeResource(getResources(),R.drawable.apple);
         bmpPear = BitmapFactory.decodeResource(getResources(),R.drawable.pear);
@@ -71,16 +79,68 @@ public class ImagepickActivity extends Activity implements OnClickListener{
         TextView tv = (TextView) findViewById(R.id.textViewDimensions);
         tv.setText("The board will be " + dimStr + " x " + dimStr);  // should be in the strings part also...
     }
+    public void setAll(){
+        int counter = 0;
+        int sizeInDp = 150;
+        int imgDim = BitmapConstruct.dpToPx(sizeInDp);
+
+        LinearLayout LL = (LinearLayout) findViewById(R.id.puzzleContainer);
+        LinearLayout subLL = new LinearLayout(this);
+        while(true){
+            if (counter % 3 == 0){
+                subLL = new LinearLayout(this);
+                subLL.setOrientation(LinearLayout.HORIZONTAL);
+                LL.addView(subLL);
+            }
+
+            String resName = "puzzle_" + counter;
+            int resId = getResources().getIdentifier(resName, "drawable", "projects.mprog.nl.npuzzle10001567");
+            Log.d("TEST", "res name:"+ resName );
+            Log.d("TEST", "resId:" + resId);
+
+            if (resId !=0) {
+                try{
+                    Bitmap bitmap = BitmapFactory.decodeResource(getResources(),resId);
+                    bitmap = BitmapConstruct.scaledBitmap(bitmap, imgDim);
+
+                    ImageButton button = new ImageButton(this);
+                    button.setId(counter);
+                    button.setOnClickListener(this);
+                    button.setPadding(10,10,10,10);
+                    button.setImageBitmap(bitmap);
+                    subLL.addView(button);
+                    mapIdToRes[counter] = resId;
+                }catch (OutOfMemoryError e) {
+                    e.printStackTrace();
+                    Log.d("TEST", "##NOT ALL IMAGES COULD BE BITMAPPED, too little memory");
+                    break;
+                }
+
+            }else{
+                Log.d("TEST", "##End while loop, no more pictures");
+                break;
+            }
+
+            counter++;
+            if (counter > 12){
+                Log.d("TEST", "##End while loop, no more than 12 pictures");
+                break;
+            }
+        }
+
+    }
 
     @Override
     public void onClick(View v) {
-        int imagePicked = R.drawable.apple;
+        int imagePickedId;
         if (v.getId() == R.id.ibApple){
-            imagePicked = R.drawable.apple;
+            imagePickedId = R.drawable.apple;
         }else if(v.getId() == R.id.ibPear){
-            imagePicked = R.drawable.pear;
+            imagePickedId = R.drawable.pear;
+        }else{
+           imagePickedId = mapIdToRes[v.getId()];
         }
-        goToPuzzle(v,imagePicked);
+        goToPuzzle(v,imagePickedId);
     }
 
     @Override

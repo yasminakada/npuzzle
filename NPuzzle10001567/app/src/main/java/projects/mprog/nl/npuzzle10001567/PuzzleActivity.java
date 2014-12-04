@@ -165,7 +165,6 @@ public class PuzzleActivity extends Activity implements View.OnClickListener {
 
             // Creation row
             final TableRow tableRow = new TableRow(this);
-//            tableRow.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.WRAP_CONTENT, TableLayout.LayoutParams.WRAP_CONTENT));
 
             ImageView image = null;
             for (int j = 0; j < dim; j++) {
