@@ -61,7 +61,7 @@
         <Button
             android:layout_width="125dp"
             android:layout_height="50dp"
-            android:text="SHUFFLE"
+            android:text="RESET"
             android:id="@+id/buttonReset"
             android:layout_gravity="center" />
         </LinearLayout>

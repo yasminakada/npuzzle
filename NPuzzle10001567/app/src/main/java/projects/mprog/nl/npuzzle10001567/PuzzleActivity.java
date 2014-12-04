@@ -239,7 +239,8 @@ public class PuzzleActivity extends Activity implements View.OnClickListener {
             // show win activity
             doShuffle();
         }else if(v.getId() == R.id.buttonReset){
-            puzzle.puzzleArray = puzzle.resetStart();
+            puzzle.resetStart();
+            resetTiles();
         }else if (canPlay){
 
             int imageViewId = v.getId();

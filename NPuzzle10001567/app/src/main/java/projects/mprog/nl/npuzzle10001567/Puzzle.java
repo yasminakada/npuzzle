@@ -142,7 +142,7 @@ public class Puzzle {
         }
         return false;
     }
-    public int[][] resetStart(){
-        return winArray;
+    public void resetStart(){
+        start(dim);
     }
 }
