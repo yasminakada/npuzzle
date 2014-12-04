@@ -12,12 +12,12 @@ import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
+import android.widget.TextView;
 
 import java.util.Arrays;
 
@@ -29,23 +29,21 @@ public class PuzzleActivity extends Activity implements View.OnClickListener {
     Thread timer;
     Boolean canPlay = false;
 
+    int clickCounter = 0;
+    TextView moveCounter;
     TableLayout tableLayout;
     Bitmap bmp = null;
     // next two bmp are scaled in initalizeTable()
-    Bitmap tinybmp;
-    Bitmap changebmp;
+
     int resId;
     ImageView iv;
     Button shuffleButton;
     Button resetButton;
     Puzzle puzzle = new Puzzle();
 
-    BitmapFactory.Options options = new BitmapFactory.Options();
-    int imageHeight;
-    int imageWidth;
-    String imageType;
-
     Bitmap[] tiles;
+
+    boolean canFinish = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,8 +51,6 @@ public class PuzzleActivity extends Activity implements View.OnClickListener {
         setContentView(R.layout.activity_puzzle);
 
         tableLayout = (TableLayout) findViewById(R.id.tablelayout);
-        tinybmp = BitmapFactory.decodeResource(getResources(),R.drawable.pear);
-        changebmp = BitmapFactory.decodeResource(getResources(),R.drawable.apple);
 
         shuffleButton = (Button) findViewById(R.id.buttonShuffle);
         shuffleButton.setOnClickListener(this);
@@ -64,93 +60,103 @@ public class PuzzleActivity extends Activity implements View.OnClickListener {
         resetButton.setOnClickListener(this);
         resetButton.setVisibility(View.INVISIBLE);
 
+        moveCounter = (TextView) findViewById(R.id.textMoves);
+        initializeAll();
 
-        initializeAll(); // will set up all starting variables from putExtras and screen width height
-//        initializeTable();
-
-        timer = new Thread(){
-            public void run(){
-                try{
+        timer = new Thread() {
+            public void run() {
+                try {
                     sleep(3000);
-                    Log.d("TEST","SLEEP ENDED");
+                    Log.d("TEST", "SLEEP ENDED");
                     canPlay = true;
 
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
 
-                            doShuffle();
+                            doShuffle(100);
+                            Log.d("TEST", Arrays.deepToString(puzzle.puzzleArray));
                             shuffleButton.setVisibility(View.VISIBLE);
                             resetButton.setVisibility(View.VISIBLE);
-
                         }
                     });
-
-                }catch(InterruptedException e){
+                } catch (InterruptedException e) {
                     e.printStackTrace();
-                    Log.d("TEST","CAUGHT EXCPETION");
+                    Log.d("TEST", "CAUGHT EXCPETION");
                 }
             }
 
-        };timer.start();
-
-        ImageView temp = (ImageView) findViewById(R.id.tempimage);
-        Bitmap test = BitmapFactory.decodeResource(getResources(),resId);
-        test = BitmapConstruct.scaledBitmap(test,scrHeight);
-        temp.setImageBitmap(test);
+        };
+        timer.start();
 
         //internal puzzle
         puzzle.start(dim);
         Log.d("TEST", Arrays.deepToString(puzzle.puzzleArray));
-//        puzzle.shuffle(100); // could also be used to change difficulty.
-        Log.d("TEST", Arrays.deepToString(puzzle.puzzleArray));
-        initializeTable();
+
+        initializeTable(); // after puzzle.start(dim)
         resetTiles();
+
         TableLayout tableLayout = (TableLayout) findViewById(R.id.tablelayout);
         tableLayout.invalidate();
     }
 
+    public void initializeAll() {
+        // Getting the screen size of the device,
+        if (Build.VERSION.SDK_INT >= 13) {
+            Display display = getWindowManager().getDefaultDisplay();
+            Point size = new Point();
+            display.getSize(size);
+            scrWidth = size.x;
+            scrHeight = size.y;
+        } else {
+            Display display = getWindowManager().getDefaultDisplay();
+            scrWidth = display.getWidth();
+            scrHeight = display.getHeight();
+        }
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            Log.d("TEST", "bundle is not null");
+            resId = bundle.getInt("resId");
+            dim = bundle.getInt("dim");
 
+        } else {
+            Log.d("TEST", "bundle is null");
+        }
 
-    public Bitmap[] devideBitmap(Bitmap bmp, int dim, int imgSize){
+//        try {
+//            bmp = BitmapFactory.decodeResource(getResources(), resId);
+//            bmp = Bitmap.createScaledBitmap(bmp, scrHeight, scrHeight, true);
+//            iv.setImageBitmap(bmp);
+//
+//        } catch (Exception e) {
+//            Log.d("TEST", "<><> Failed setting image");
+//        }
+
+    }
+
+    public Bitmap[] devideBitmap(Bitmap bmp, int dim, int imgSize) {
         int counter = 1;
-        int step = imgSize/dim;
-        int placement;
-        Bitmap[]  bitmapArray = new Bitmap[dim*dim];
-        for (int i = 0; i<dim; i++){
-            for(int j =0; j<dim; j++){
+        int step = imgSize / dim;
+        Bitmap[] bitmapArray = new Bitmap[dim * dim];
+        for (int i = 0; i < dim; i++) {
+            for (int j = 0; j < dim; j++) {
                 int x = i * step;
                 int y = j * step;
-                Bitmap tempBmp = Bitmap.createBitmap(bmp,y,x,step,step);
-                if (counter==dim * dim){
+                Bitmap tempBmp = Bitmap.createBitmap(bmp, y, x, step, step);
+                if (counter == dim * dim) {
                     // should be an empty tile.
                     counter = 0;
                 }
                 bitmapArray[counter] = tempBmp;
                 counter++;
-//                placement = puzzle.puzzleArray[i][j];
-//                ImageView iv = (ImageView) findViewById(counter);
 
             }
-            if (bitmapArray[1] ==null){
-                Log.d("TEST","bitmapArray IS NULL");
+            if (bitmapArray[1] == null) {
+                Log.d("TEST", "bitmapArray IS NULL");
             }
         }
         Log.d("TEST", Arrays.deepToString(puzzle.puzzleArray));
         return bitmapArray;
-    }
-
-//    public Bitmap[] assignBitmapToArray(){
-//
-//    }
-
-    public void checkImage(int resId){
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeResource(getResources(), resId, options);
-        int imageHeight = options.outHeight;
-        int imageWidth = options.outWidth;
-        String imageType = options.outMimeType;
-
     }
 
     public void initializeTable() {
@@ -160,6 +166,12 @@ public class PuzzleActivity extends Activity implements View.OnClickListener {
         int newWidth = (int) resizeWidth;
         bmp = BitmapConstruct.scaledBitmap(bmp, newWidth);
         tiles = devideBitmap(bmp, dim, newWidth);
+
+        // the preview image is set:
+        ImageView preview = (ImageView) findViewById(R.id.prevImage);
+        int prevDim = BitmapConstruct.dpToPx(200);
+        Bitmap previewImage = BitmapConstruct.scaledBitmap(bmp, prevDim);
+        preview.setImageBitmap(previewImage);
 
         for (int i = 0; i < dim; i++) {
 
@@ -182,8 +194,6 @@ public class PuzzleActivity extends Activity implements View.OnClickListener {
                 tableRow.addView(image);
 
             }
-
-
             tableLayout.addView(tableRow);
         }
     }
@@ -193,20 +203,20 @@ public class PuzzleActivity extends Activity implements View.OnClickListener {
         for (int i = 0; i < dim; i++) {
             for (int j = 0; j < dim; j++) {
                 int imageId = puzzle.puzzleArray[i][j];
-                Log.d("TEST","" + imageId);
+                Log.d("TEST", "" + imageId);
                 ImageView image = (ImageView) findViewById(counter);
                 image.setImageBitmap(tiles[imageId]);
-                if (imageId == 0){
+                if (imageId == 0) {
                     image.setVisibility(View.INVISIBLE);
-                }else{
+                } else {
                     image.setVisibility(View.VISIBLE);
                 }
                 counter++;
-                if (counter == dim*dim){
-                    counter=0;
+                if (counter == dim * dim) {
+                    counter = 0;
                 }
             }
-        tableLayout.invalidate();
+            tableLayout.invalidate();
         }
 
     }
@@ -224,120 +234,179 @@ public class PuzzleActivity extends Activity implements View.OnClickListener {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+        if (id != 0) {
+            switch (id) {
+                case R.id.changeEasy:
+                    if (dim == 3) {
+                        return false;
+                    }
+                    dim = 3;
+                    break;
+                case R.id.changeMedium:
+                    if (dim == 4) {
+                        return false;
+                    }
+                    dim = 4;
+                    break;
+                case R.id.changeHard:
+                    if (dim == 5) {
+                        return false;
+                    }
+                    dim = 5;
+                    break;
+                case R.id.changeImage:
+                    Intent i = new Intent(this, ImagepickActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("dim", dim);
+                    i.putExtras(bundle);
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+                    canFinish = true;
+                    startActivity(i);
+
+                    break;
+            }
+            canPlay = false;
+            shuffleButton.setVisibility(View.INVISIBLE);
+            resetButton.setVisibility(View.INVISIBLE);
+            if (tableLayout.getChildCount() > 0)
+                tableLayout.removeAllViews();
+
+            clickCounter= 0;
+            resetCount(clickCounter);
+
+            puzzle = new Puzzle();
+            puzzle.start(dim);
+            initializeTable();
+            resetTiles();
+
+            timer = new Thread() {
+                public void run() {
+                    try {
+                        sleep(3000);
+                        Log.d("TEST", "SLEEP ENDED");
+                        canPlay = true;
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                doShuffle(100);
+                                shuffleButton.setVisibility(View.VISIBLE);
+                                resetButton.setVisibility(View.VISIBLE);
+                            }
+                        });
+
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                        Log.d("TEST", "CAUGHT EXCPETION");
+                    }
+                }
+            };
+            timer.start();
+
         }
-        return super.onOptionsItemSelected(item);
+        return false;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (canFinish) finish();
     }
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.buttonShuffle){
+
+        if (v.getId() == R.id.buttonShuffle) {
             // show win activity
-            doShuffle();
-        }else if(v.getId() == R.id.buttonReset){
+            doShuffle(100);
+            clickCounter = 0;
+            resetCount(clickCounter);
+        } else if (v.getId() == R.id.buttonReset) {
+            clickCounter = 999;
+            resetCount(clickCounter);
             puzzle.resetStart();
             resetTiles();
-        }else if (canPlay){
+        } else if (canPlay) {
 
             int imageViewId = v.getId();
-            Log.d("TEST","" + imageViewId);
+            Log.d("TEST", "" + imageViewId);
             boolean b = puzzle.clickSwap(imageViewId);
-            Log.d("TEST","" + b);
-            if (b == true){
+            Log.d("TEST", "" + b);
+            if (b == true) {
                 resetTiles();
-                if(puzzle.checkWin()){
+                clickCounter++;
+                resetCount(clickCounter);
+                if (puzzle.checkWin()) {
                     goToWin();
                 }
             }
         }
     }
 
+    private void resetCount(int count) {
+        moveCounter.setText("MOVES: " + count);
+        moveCounter.invalidate();
+
+    }
+
     private void goToWin() {
-        final Intent i = new Intent(this,WinActivity.class);
-        Thread lastAppear = new Thread(){
-            public void run(){
-                try{
+        canFinish = true;
+        final Intent i = new Intent(this, WinActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putInt("dim", dim);
+        bundle.putInt("moves", clickCounter);
+        bundle.putInt("image", resId);
+        i.putExtras(bundle);
+        Thread lastAppear = new Thread() {
+            public void run() {
+                try {
                     canPlay = false;
                     sleep(500);
-                    Log.d("TEST","SLEEP ENDED");
+                    Log.d("TEST", "SLEEP ENDED");
 
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                                ImageView lastTile = (ImageView) findViewById(0);
-                                lastTile.setVisibility(View.VISIBLE);
-                                shuffleButton.setVisibility(View.INVISIBLE);
-                                resetButton.setVisibility(View.INVISIBLE);
-                                tableLayout.invalidate();
+                            ImageView lastTile = (ImageView) findViewById(0);
+                            lastTile.setVisibility(View.VISIBLE);
+                            shuffleButton.setVisibility(View.INVISIBLE);
+                            resetButton.setVisibility(View.INVISIBLE);
+                            tableLayout.invalidate();
                         }
                     });
 
-                }catch(InterruptedException e){
+                } catch (InterruptedException e) {
                     e.printStackTrace();
-                    Log.d("TEST","CAUGHT EXCPETION");
+                    Log.d("TEST", "CAUGHT EXCPETION");
                 }
             }
 
-        };lastAppear.start();
-        Thread win = new Thread(){
-            public void run(){
-                try{
+        };
+        lastAppear.start();
+        Thread win = new Thread() {
+            public void run() {
+                try {
                     canPlay = false;
                     sleep(2000);
-                    Log.d("TEST","SLEEP ENDED");
+                    Log.d("TEST", "SLEEP ENDED");
 
-                }catch(InterruptedException e){
+                } catch (InterruptedException e) {
                     e.printStackTrace();
-                    Log.d("TEST","CAUGHT EXCPETION");
-                }finally {
+                    Log.d("TEST", "CAUGHT EXCPETION");
+                } finally {
                     startActivity(i);
                 }
             }
 
-        };win.start();
+        };
+        win.start();
 
     }
 
-    public void doShuffle() {
-       puzzle.shuffle(25);
-       resetTiles();
+    public void doShuffle(int shuffleTimes) {
+        puzzle.shuffle(shuffleTimes);
+        resetTiles();
     }
 
-    public void initializeAll() {
-        // Getting the screen size of the device,
-        if (Build.VERSION.SDK_INT >= 13){
-            Display display = getWindowManager().getDefaultDisplay();
-            Point size = new Point();
-            display.getSize(size);
-            scrWidth = size.x;
-            scrHeight = size.y;
-        }else{
-            Display display = getWindowManager().getDefaultDisplay();
-            scrWidth = display.getWidth();
-            scrHeight = display.getHeight();
-        }
-        Bundle bundle = getIntent().getExtras();
-        if (bundle != null){
-            Log.d("TEST", "bundle is not null");
-            resId = bundle.getInt("resId");
-            dim = bundle.getInt("dim");
-//            iv = (ImageView) findViewById(R.id.imageView);
-
-        }else{
-            Log.d("TEST", "bundle is null");
-        }
-
-        try{
-            bmp = BitmapFactory.decodeResource(getResources(), resId);
-            bmp = Bitmap.createScaledBitmap(bmp,scrHeight, scrHeight, true);
-            iv.setImageBitmap(bmp);
-
-        }catch(Exception e){
-            Log.d("TEST", "<><> Failed setting image");
-        }
-
-    }
 }

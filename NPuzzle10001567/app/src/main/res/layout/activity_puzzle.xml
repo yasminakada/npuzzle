@@ -9,7 +9,7 @@
 
 
     <LinearLayout
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:layout_width="fill_parent"
         android:layout_height="0dip"
         android:layout_weight="0.2"
@@ -18,14 +18,15 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/tempimage"/>
+            android:paddingTop="20dp"
+            android:id="@+id/prevImage"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
+            android:gravity="bottom"
             android:text="Moves: 0"
-            android:layout_gravity="bottom"
             android:id="@+id/textMoves" />
 
         </LinearLayout>

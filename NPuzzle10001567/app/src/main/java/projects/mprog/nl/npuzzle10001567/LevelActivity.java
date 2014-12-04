@@ -32,9 +32,7 @@ public class LevelActivity extends Activity implements OnClickListener {
 
         hard = (Button) findViewById(R.id.button_hard);
         hard.setOnClickListener(this);
-
     }
-
 
     @Override
     public void onClick(View v) {
@@ -50,6 +48,12 @@ public class LevelActivity extends Activity implements OnClickListener {
             dif = "HARD";
         }
         showToast(v,dif);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        finish();
     }
 
     @Override
@@ -78,7 +82,7 @@ public class LevelActivity extends Activity implements OnClickListener {
         // Show a Toast and pass an int (number of tiles) to ImagePick
         int dim = 3; // indicates the dimensions of the game 3x3
 
-        Toast t = Toast.makeText(this, "You have chosen difficulty: " + level ,Toast.LENGTH_SHORT);
+        Toast t = Toast.makeText(this, "You have chosen difficulty: " + level ,Toast.LENGTH_LONG);
         t.show();
         if (level.equals("EASY")) {
             dim = 3;
@@ -88,7 +92,7 @@ public class LevelActivity extends Activity implements OnClickListener {
             dim = 5;
         }
         Bundle lev = new Bundle();
-        lev.putInt("dimensions", dim);
+        lev.putInt("dim", dim);
         Intent i = new Intent(this,ImagepickActivity.class);
         i.putExtras(lev);
         startActivity(i);

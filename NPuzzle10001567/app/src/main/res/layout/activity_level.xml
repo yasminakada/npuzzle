@@ -8,8 +8,8 @@
 
     <!-- this is the middle button: -->
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="200dp"
+        android:layout_height="100dp"
         android:text="Medium"
         android:id="@+id/button_medium"
         android:layout_centerVertical="true"
@@ -17,8 +17,8 @@
 
     <!-- this is the  button upper button:-->
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="200dp"
+        android:layout_height="100dp"
         android:text="Easy"
         android:id="@+id/button_easy"
         android:layout_above="@+id/button_medium"
@@ -26,8 +26,8 @@
 
     <!-- this is the lower button:-->
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="200dp"
+        android:layout_height="100dp"
         android:text="Hard"
         android:id="@+id/button_hard"
         android:layout_below="@+id/button_medium"
@@ -37,10 +37,21 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="LEVELSCREEN"
+        android:text="PICK A DIFFICULTY"
         android:id="@+id/textView2"
         android:layout_above="@+id/button_easy"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="41dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Note: Loading images might take a while."
+        android:id="@+id/textView3"
+        android:layout_below="@+id/button_hard"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="44dp"
+        android:textSize="12dp" />
 
 </RelativeLayout>

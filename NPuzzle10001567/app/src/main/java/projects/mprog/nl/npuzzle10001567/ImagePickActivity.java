@@ -23,15 +23,11 @@ import android.widget.TextView;
 
 
 public class ImagepickActivity extends Activity implements OnClickListener{
-    ImageButton ibPear;
-    ImageButton ibApple;
+
     int dim;
     int scrWidth;
     int scrHeight;
-    Bitmap bmpApple;
-    Bitmap bmpPear;
-    Bitmap bmpAppleSmall;
-    Bitmap bmpPearSmall;
+
     Double smallRatio = 0.2;
     int[] mapIdToRes = new int[12];
 
@@ -52,29 +48,10 @@ public class ImagepickActivity extends Activity implements OnClickListener{
             scrWidth = display.getWidth();
             scrHeight = display.getHeight();
         }
-        setAll();
-
-        bmpApple = BitmapFactory.decodeResource(getResources(),R.drawable.apple);
-        bmpPear = BitmapFactory.decodeResource(getResources(),R.drawable.pear);
-        double d = scrHeight*smallRatio;
-        int buttonSize = (int)d;
-        bmpAppleSmall = Bitmap.createScaledBitmap(bmpApple,buttonSize, buttonSize, true);
-        bmpPearSmall = Bitmap.createScaledBitmap(bmpPear,buttonSize, buttonSize, true);
-
-        // These bitmaps will be passed to PuzzleActivity together with the dimensions
-        bmpApple = Bitmap.createScaledBitmap(bmpApple,scrHeight, scrHeight, true);
-        bmpPear = Bitmap.createScaledBitmap(bmpPear,scrHeight, scrHeight, true);
-
-        ibApple = (ImageButton) findViewById(R.id.ibApple);
-        ibApple.setImageBitmap(bmpAppleSmall);
-        ibApple.setOnClickListener(this);
-
-        ibPear = (ImageButton) findViewById(R.id.ibPear);
-        ibPear.setImageBitmap(bmpPearSmall);
-        ibPear.setOnClickListener(this);
+        setAll(); // sets the images in place.
 
         Bundle gotLevel = getIntent().getExtras();
-        dim = gotLevel.getInt("dimensions");
+        dim = gotLevel.getInt("dim");
         String dimStr = Integer.toString(dim);
         TextView tv = (TextView) findViewById(R.id.textViewDimensions);
         tv.setText("The board will be " + dimStr + " x " + dimStr);  // should be in the strings part also...
@@ -94,7 +71,7 @@ public class ImagepickActivity extends Activity implements OnClickListener{
             }
 
             String resName = "puzzle_" + counter;
-            int resId = getResources().getIdentifier(resName, "drawable", "projects.mprog.nl.npuzzle10001567");
+            int resId = getResources().getIdentifier(resName, "drawable", getPackageName());
             Log.d("TEST", "res name:"+ resName );
             Log.d("TEST", "resId:" + resId);
 
@@ -133,15 +110,10 @@ public class ImagepickActivity extends Activity implements OnClickListener{
     @Override
     public void onClick(View v) {
         int imagePickedId;
-        if (v.getId() == R.id.ibApple){
-            imagePickedId = R.drawable.apple;
-        }else if(v.getId() == R.id.ibPear){
-            imagePickedId = R.drawable.pear;
-        }else{
-           imagePickedId = mapIdToRes[v.getId()];
-        }
+        imagePickedId = mapIdToRes[v.getId()];
         goToPuzzle(v,imagePickedId);
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

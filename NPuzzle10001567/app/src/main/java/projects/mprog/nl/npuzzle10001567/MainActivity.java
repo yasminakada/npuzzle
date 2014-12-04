@@ -11,20 +11,41 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 
 
-public class MainActivity extends Activity implements OnClickListener{
-    Button play;
+public class MainActivity extends Activity{
+    Thread timer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        play = (Button) findViewById(R.id.playbutton);
-        play.setOnClickListener(this);
+
+        timer = new Thread(){
+            public void run(){
+                try{
+                    sleep(3000);
+                    Log.d("TEST","SLEEP ENDED");
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            goToLevel();
+
+                        }
+                    });
+
+                }catch(InterruptedException e){
+                    e.printStackTrace();
+                    Log.d("TEST","CAUGHT EXCPETION");
+                }
+            }
+
+        };timer.start();
     }
 
     @Override
-    public void onClick(View v) {
-        goToLevel(v);
+    protected void onPause() {
+        super.onPause();
+        finish();
     }
 
     @Override
@@ -49,9 +70,8 @@ public class MainActivity extends Activity implements OnClickListener{
         return super.onOptionsItemSelected(item);
     }
 
-    public void goToLevel(View v) {
+    public void goToLevel() {
         // OWN
-        Log.d("BUTTON CLICK", v.getId() + "- was clicked.");
         Intent i = new Intent(this, LevelActivity.class);
         startActivity(i);
     }

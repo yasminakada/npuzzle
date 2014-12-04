@@ -17,7 +17,8 @@
             android:layout_height="wrap_content"
             android:text="@string/tv_dimensions"
             android:id="@+id/textViewDimensions"
-            android:gravity="bottom"/>
+            android:gravity="bottom"
+            android:textSize="24sp" />
     </LinearLayout>
     <LinearLayout
         android:layout_width="wrap_content"
@@ -31,35 +32,12 @@
             android:textSize="40sp"
             android:id="@+id/textViewPickImage" />
     </LinearLayout>
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_weight="0.1"
-        android:id="@+id/linear1"
-        android:gravity="center">
-        <ImageButton
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:id="@+id/ibApple"
-            android:background="@drawable/apple"
-            android:scaleType="fitCenter"
-            android:adjustViewBounds="true"
-            android:layout_margin="15dp" />
 
-        <ImageButton
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:id="@+id/ibPear"
-            android:scaleType="fitCenter"
-            android:adjustViewBounds="true"
-            android:background="@drawable/pear"
-             />
-    </LinearLayout>
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:layout_weight="0.7"
+        android:layout_weight="0.8"
         android:id="@+id/puzzleContainer"
         android:gravity="top">
     </LinearLayout>
