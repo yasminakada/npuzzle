@@ -309,7 +309,7 @@ public class PuzzleActivity extends Activity implements View.OnClickListener {
     @Override
     protected void onPause() {
         super.onPause();
-        saveFirstStart();
+        saveFirstRun();
         if (canFinish) finish();
     }
 
@@ -432,10 +432,10 @@ public class PuzzleActivity extends Activity implements View.OnClickListener {
         return editor.commit();
     }
 
-    public boolean saveFirstStart(){
+    public boolean saveFirstRun(){
         SharedPreferences prefs = this.getSharedPreferences("mainpref", MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean("firstStart", false);
+        editor.putBoolean("firstRun", false);
         return editor.commit();
     }
 
