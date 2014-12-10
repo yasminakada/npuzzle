@@ -1,7 +1,6 @@
 package projects.mprog.nl.npuzzle10001567;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -16,7 +15,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -63,9 +61,12 @@ public class PuzzleActivity extends Activity implements View.OnClickListener {
         resetButton.setVisibility(View.INVISIBLE);
 
         moveCounter = (TextView) findViewById(R.id.textMoves);
-        initializeAll();
 
+        initializeAll();
         if (loadPuzzle()) {
+            Log.d("TEST", "LOADPUZZLE");
+            shuffleButton.setVisibility(View.VISIBLE);
+            resetButton.setVisibility(View.VISIBLE);
 
         }else {
             Thread timer = new Thread() {
@@ -120,12 +121,12 @@ public class PuzzleActivity extends Activity implements View.OnClickListener {
         }
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-            Log.d("TEST", "bundle is not null");
+            Log.d("TEST", "##bundle is not null");
             resId = bundle.getInt("resId");
             dim = bundle.getInt("dim");
 
         } else {
-            Log.d("TEST", "bundle is null");
+            Log.d("TEST", "##bundle is null");
         }
 
     }
@@ -308,7 +309,14 @@ public class PuzzleActivity extends Activity implements View.OnClickListener {
     @Override
     protected void onPause() {
         super.onPause();
+        saveFirstStart();
         if (canFinish) finish();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        savePuzzle();
     }
 
     @Override
@@ -407,7 +415,7 @@ public class PuzzleActivity extends Activity implements View.OnClickListener {
     }
 
     public boolean savePuzzle() {
-        SharedPreferences prefs = this.getSharedPreferences("puzzlepref", 0);
+        SharedPreferences prefs = this.getSharedPreferences("puzzlepref", MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putInt("dim", puzzle.dim);
         int counter = 0;
@@ -417,30 +425,46 @@ public class PuzzleActivity extends Activity implements View.OnClickListener {
                 counter++;
             }
         }
+        editor.putInt("resId", resId);
         editor.putInt("row0", puzzle.row0);
         editor.putInt("col0", puzzle.col0);
+        editor.putInt("clickCounter", clickCounter);
+        return editor.commit();
+    }
+
+    public boolean saveFirstStart(){
+        SharedPreferences prefs = this.getSharedPreferences("mainpref", MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("firstStart", false);
         return editor.commit();
     }
 
     public boolean loadPuzzle() {
-        int newdim;
-        int newrow0;
-        int newcol0;
+        int savedDim;
+        int savedRow0;
+        int savedCol0;
+        int savedClickCounter;
         int[] array;
-        try {
-            SharedPreferences prefs = this.getSharedPreferences("puzzlepref", 0);
-            newdim = prefs.getInt("dim", MODE_PRIVATE);
-            newrow0 = prefs.getInt("row0", MODE_PRIVATE);
-            newcol0 = prefs.getInt("col0", MODE_PRIVATE);
-            array = new int[newdim*newdim];
-            for (int i = 0; i < newdim * newdim; i++)
-                array[i] = prefs.getInt("p" + i, MODE_PRIVATE);
 
-        }catch (NullPointerException e){
-            Log.d("TEST", "##No save files");
-            return false;
-        }
-        puzzle.setPuzzle(newdim,newrow0,newcol0,array);
+        SharedPreferences prefs = this.getSharedPreferences("puzzlepref",MODE_PRIVATE);
+        if (prefs.getInt("dim", MODE_PRIVATE)== 0) return false;
+
+        savedDim = prefs.getInt("dim", MODE_PRIVATE);
+        savedClickCounter = prefs.getInt("clickCounter", MODE_PRIVATE);
+        savedRow0 = prefs.getInt("row0", MODE_PRIVATE);
+        savedCol0 = prefs.getInt("col0", MODE_PRIVATE);
+        clickCounter = savedClickCounter;
+        resId = prefs.getInt("resId", MODE_PRIVATE);
+        array = new int[savedDim*savedDim];
+
+        for (int i = 0; i < savedDim * savedDim; i++)
+            array[i] = prefs.getInt("p" + i, MODE_PRIVATE);
+
+        Log.d("TEST","savedDim:" + savedDim);
+        Log.d("TEST","savedRow0:" + savedRow0);
+
+        puzzle.setPuzzle(savedDim,savedRow0, savedCol0,array);
+
         return true;
     }
 

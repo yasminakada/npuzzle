@@ -2,6 +2,7 @@ package projects.mprog.nl.npuzzle10001567;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -13,12 +14,14 @@ import android.widget.Button;
 
 public class MainActivity extends Activity{
     Thread timer;
+    Boolean firstStart = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        load();
         timer = new Thread(){
             public void run(){
                 try{
@@ -28,7 +31,12 @@ public class MainActivity extends Activity{
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            goToLevel();
+                            Log.d("TEST", "in thread: " + firstStart);
+                            if (firstStart) {
+                                goToLevel();
+                            }else{
+                                goToPuzzle();
+                            }
 
                         }
                     });
@@ -42,9 +50,11 @@ public class MainActivity extends Activity{
         };timer.start();
     }
 
+
     @Override
     protected void onPause() {
         super.onPause();
+        save();
         finish();
     }
 
@@ -72,7 +82,42 @@ public class MainActivity extends Activity{
 
     public void goToLevel() {
         // OWN
+        firstStart = false;
         Intent i = new Intent(this, LevelActivity.class);
         startActivity(i);
+    }
+
+    private void goToPuzzle() {
+        Intent i = new Intent(this, PuzzleActivity.class);
+        startActivity(i);
+    }
+
+    public boolean save() {
+        SharedPreferences prefs = this.getSharedPreferences("mainpref", MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        Log.d("TEST","Saved: " + firstStart);
+        editor.putBoolean("firstStart", firstStart);
+        return editor.commit();
+    }
+
+    public boolean load() {
+
+        SharedPreferences prefs = this.getSharedPreferences("mainpref",MODE_PRIVATE);
+        try {
+            if (prefs.getBoolean("firstStart", true)){
+                firstStart = true;
+            }else{
+                firstStart = false;
+            }
+            Log.d("TEST","Loaded: " + firstStart);
+            return firstStart;
+
+        }catch (Exception e){
+            Log.d("TEST", "MAIN: some exception");
+            e.printStackTrace();
+        }
+        firstStart = true;
+        return true;
+
     }
 }
