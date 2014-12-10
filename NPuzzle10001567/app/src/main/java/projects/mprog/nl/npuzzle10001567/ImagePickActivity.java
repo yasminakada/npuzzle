@@ -27,6 +27,7 @@ public class ImagepickActivity extends Activity implements OnClickListener{
     int dim;
     int scrWidth;
     int scrHeight;
+    Boolean canFinish = false;
 
     Double smallRatio = 0.2;
     int[] mapIdToRes = new int[12];
@@ -56,6 +57,13 @@ public class ImagepickActivity extends Activity implements OnClickListener{
         TextView tv = (TextView) findViewById(R.id.textViewDimensions);
         tv.setText("The board will be " + dimStr + " x " + dimStr);  // should be in the strings part also...
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (canFinish) finish();
+    }
+
     public void setAll(){
         int counter = 0;
         int sizeInDp = 150;
@@ -143,6 +151,7 @@ public class ImagepickActivity extends Activity implements OnClickListener{
         bundle.putInt("resId", resId);
         bundle.putInt("dim",dim);
         i.putExtras(bundle);
+        canFinish = true;
         startActivity(i);
 
     }

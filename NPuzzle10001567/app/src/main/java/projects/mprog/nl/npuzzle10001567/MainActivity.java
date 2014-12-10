@@ -22,7 +22,9 @@ public class MainActivity extends Activity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Log.d("TEST", "FR: " + firstRun);
         firstRun = load();
+        Log.d("TEST", "FR: " + firstRun);
 
         timer = new Thread(){
             public void run(){
@@ -80,10 +82,16 @@ public class MainActivity extends Activity{
         return super.onOptionsItemSelected(item);
     }
 
-    public boolean load(){
+    public Boolean load(){
         SharedPreferences prefs = this.getSharedPreferences("mainpref", Context.MODE_PRIVATE);
-        Boolean wasRunBefore = prefs.getBoolean("firstRun", true);
+        clearPreference();
+
+        if (prefs.contains("firstRun")){
+        Boolean wasRunBefore = prefs.getBoolean("firstRun",true);
         return wasRunBefore;
+        }
+        Log.d("TEST","out if");
+        return true;
     }
 
     public void goToLevel() {
@@ -92,8 +100,15 @@ public class MainActivity extends Activity{
         startActivity(i);
     }
 
-    private void goToPuzzle() {
+    public void goToPuzzle() {
         Intent i = new Intent(this, PuzzleActivity.class);
         startActivity(i);
+    }
+
+    public void clearPreference(){
+        SharedPreferences prefs = this.getSharedPreferences("mainpref", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.clear();
+        editor.commit();
     }
 }

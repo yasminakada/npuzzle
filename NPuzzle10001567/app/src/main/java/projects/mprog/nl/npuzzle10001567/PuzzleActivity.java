@@ -1,7 +1,9 @@
 package projects.mprog.nl.npuzzle10001567;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
@@ -23,7 +25,7 @@ import java.util.Arrays;
 
 
 public class PuzzleActivity extends Activity implements View.OnClickListener {
-    int dim;
+    int dim = 3;
     int scrWidth;
     int scrHeight;
     Thread timer;
@@ -35,6 +37,7 @@ public class PuzzleActivity extends Activity implements View.OnClickListener {
     Bitmap bmp = null;
 
     int resId;
+
     ImageView iv;
     Button shuffleButton;
     Button resetButton;
@@ -48,6 +51,8 @@ public class PuzzleActivity extends Activity implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_puzzle);
+        // set default image
+        resId = getResources().getIdentifier("puzzle_0", "drawable", getPackageName());
 
         tableLayout = (TableLayout) findViewById(R.id.tablelayout);
 
@@ -408,4 +413,11 @@ public class PuzzleActivity extends Activity implements View.OnClickListener {
         resetTiles();
     }
 
+    public void saveFirstRun(){
+        SharedPreferences prefs = getSharedPreferences("mainpref", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("firstRun", false);
+        editor.commit();
+
+    }
 }
