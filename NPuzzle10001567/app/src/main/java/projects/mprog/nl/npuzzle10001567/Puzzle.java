@@ -135,6 +135,21 @@ public class Puzzle {
         }
         return pos;
     }
+    public void setPuzzle(int dimensions, int newRow0, int newCol0, int[] array){
+        int counter = 0;
+        dim = dimensions;
+        resetStart();
+        // set row0 col0 for empty tile at start of the game:
+        row0 = newRow0;
+        col0 = newCol0;
+        // set 1 to dim*dim in the array, in order.
+        for (int i=0; i < dim; i++){
+            for (int j=0; j < dim; j++){
+                puzzleArray[i][j] = array[counter];
+                counter++;
+            }
+        }
+    }
 
     public boolean checkWin(){
         if (Arrays.deepEquals(puzzleArray,winArray)){

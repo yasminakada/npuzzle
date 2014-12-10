@@ -1,7 +1,9 @@
 package projects.mprog.nl.npuzzle10001567;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
@@ -23,17 +25,17 @@ import java.util.Arrays;
 
 
 public class PuzzleActivity extends Activity implements View.OnClickListener {
+    public static final String PREFS = "puzzle";
+
     int dim;
     int scrWidth;
     int scrHeight;
-    Thread timer;
     Boolean canPlay = false;
 
     int clickCounter = 0;
     TextView moveCounter;
     TableLayout tableLayout;
     Bitmap bmp = null;
-    // next two bmp are scaled in initalizeTable()
 
     int resId;
     ImageView iv;
@@ -63,38 +65,41 @@ public class PuzzleActivity extends Activity implements View.OnClickListener {
         moveCounter = (TextView) findViewById(R.id.textMoves);
         initializeAll();
 
-        timer = new Thread() {
-            public void run() {
-                try {
-                    sleep(3000);
-                    Log.d("TEST", "SLEEP ENDED");
-                    canPlay = true;
+        if (loadPuzzle()) {
 
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
+        }else {
+            Thread timer = new Thread() {
+                public void run() {
+                    try {
+                        sleep(3000);
+                        Log.d("TEST", "SLEEP ENDED");
+                        canPlay = true;
 
-                            doShuffle(100);
-                            Log.d("TEST", Arrays.deepToString(puzzle.puzzleArray));
-                            shuffleButton.setVisibility(View.VISIBLE);
-                            resetButton.setVisibility(View.VISIBLE);
-                        }
-                    });
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                    Log.d("TEST", "CAUGHT EXCPETION");
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                doShuffle(100);
+                                Log.d("TEST", Arrays.deepToString(puzzle.puzzleArray));
+                                shuffleButton.setVisibility(View.VISIBLE);
+                                resetButton.setVisibility(View.VISIBLE);
+                            }
+                        });
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                        Log.d("TEST", "CAUGHT EXCPETION");
+                    }
                 }
-            }
 
-        };
-        timer.start();
+            };
+            timer.start();
 
-        //internal puzzle
-        puzzle.start(dim);
-        Log.d("TEST", Arrays.deepToString(puzzle.puzzleArray));
-
+            //internal puzzle
+            puzzle.start(dim);
+            Log.d("TEST", Arrays.deepToString(puzzle.puzzleArray));
+        }
         initializeTable(); // after puzzle.start(dim)
-        resetTiles();
+//        resetTiles();
 
         TableLayout tableLayout = (TableLayout) findViewById(R.id.tablelayout);
         tableLayout.invalidate();
@@ -123,17 +128,9 @@ public class PuzzleActivity extends Activity implements View.OnClickListener {
             Log.d("TEST", "bundle is null");
         }
 
-//        try {
-//            bmp = BitmapFactory.decodeResource(getResources(), resId);
-//            bmp = Bitmap.createScaledBitmap(bmp, scrHeight, scrHeight, true);
-//            iv.setImageBitmap(bmp);
-//
-//        } catch (Exception e) {
-//            Log.d("TEST", "<><> Failed setting image");
-//        }
-
     }
 
+    // Should be in BitmapConstruct class:
     public Bitmap[] devideBitmap(Bitmap bmp, int dim, int imgSize) {
         int counter = 1;
         int step = imgSize / dim;
@@ -279,7 +276,7 @@ public class PuzzleActivity extends Activity implements View.OnClickListener {
             initializeTable();
             resetTiles();
 
-            timer = new Thread() {
+            Thread timer = new Thread() {
                 public void run() {
                     try {
                         sleep(3000);
@@ -407,6 +404,44 @@ public class PuzzleActivity extends Activity implements View.OnClickListener {
     public void doShuffle(int shuffleTimes) {
         puzzle.shuffle(shuffleTimes);
         resetTiles();
+    }
+
+    public boolean savePuzzle() {
+        SharedPreferences prefs = this.getSharedPreferences("puzzlepref", 0);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt("dim", puzzle.dim);
+        int counter = 0;
+        for(int i=0;i < puzzle.dim;i++){
+            for (int j=0; i < puzzle.dim; j++ ){
+                editor.putInt("p" + i, puzzle.puzzleArray[i][j]);
+                counter++;
+            }
+        }
+        editor.putInt("row0", puzzle.row0);
+        editor.putInt("col0", puzzle.col0);
+        return editor.commit();
+    }
+
+    public boolean loadPuzzle() {
+        int newdim;
+        int newrow0;
+        int newcol0;
+        int[] array;
+        try {
+            SharedPreferences prefs = this.getSharedPreferences("puzzlepref", 0);
+            newdim = prefs.getInt("dim", MODE_PRIVATE);
+            newrow0 = prefs.getInt("row0", MODE_PRIVATE);
+            newcol0 = prefs.getInt("col0", MODE_PRIVATE);
+            array = new int[newdim*newdim];
+            for (int i = 0; i < newdim * newdim; i++)
+                array[i] = prefs.getInt("p" + i, MODE_PRIVATE);
+
+        }catch (NullPointerException e){
+            Log.d("TEST", "##No save files");
+            return false;
+        }
+        puzzle.setPuzzle(newdim,newrow0,newcol0,array);
+        return true;
     }
 
 }
