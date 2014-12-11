@@ -78,6 +78,7 @@ public class WinActivity extends Activity implements View.OnClickListener{
     @Override
     public void onClick(View v) {
         if (v.getId()== R.id.buttonPickImage){
+            canFinish = true;
             Intent i = new Intent(this,ImagepickActivity.class);
             Bundle bundle = new Bundle();
             bundle.putInt("dim",dim);

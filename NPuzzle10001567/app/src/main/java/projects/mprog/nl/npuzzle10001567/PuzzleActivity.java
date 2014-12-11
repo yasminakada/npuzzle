@@ -51,6 +51,9 @@ public class PuzzleActivity extends Activity implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_puzzle);
+
+        saveFirstRun(false);
+
         // set default image
         resId = getResources().getIdentifier("puzzle_0", "drawable", getPackageName());
 
@@ -65,38 +68,42 @@ public class PuzzleActivity extends Activity implements View.OnClickListener {
         resetButton.setVisibility(View.INVISIBLE);
 
         moveCounter = (TextView) findViewById(R.id.textMoves);
-        initializeAll();
 
-        timer = new Thread() {
-            public void run() {
-                try {
-                    sleep(3000);
-                    Log.d("TEST", "SLEEP ENDED");
-                    canPlay = true;
+        if (initializeAll()) {
+            timer = new Thread() {
+                public void run() {
+                    try {
+                        sleep(3000);
+                        Log.d("TEST", "SLEEP ENDED");
+                        canPlay = true;
 
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
 
-                            doShuffle(100);
-                            Log.d("TEST", Arrays.deepToString(puzzle.puzzleArray));
-                            shuffleButton.setVisibility(View.VISIBLE);
-                            resetButton.setVisibility(View.VISIBLE);
-                        }
-                    });
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                    Log.d("TEST", "CAUGHT EXCPETION");
+                                doShuffle(100);
+                                Log.d("TEST", Arrays.deepToString(puzzle.puzzleArray));
+                                shuffleButton.setVisibility(View.VISIBLE);
+                                resetButton.setVisibility(View.VISIBLE);
+                            }
+                        });
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                        Log.d("TEST", "CAUGHT EXCPETION");
+                    }
                 }
-            }
+            };
+            timer.start();
 
-        };
-        timer.start();
-
-        //internal puzzle
-        puzzle.start(dim);
-        Log.d("TEST", Arrays.deepToString(puzzle.puzzleArray));
-
+            //internal puzzle
+            puzzle.start(dim);
+            Log.d("TEST", Arrays.deepToString(puzzle.puzzleArray));
+        } else if (loadPuzzle()) {
+            Log.d("TEST", "LOADPUZZLE");
+            shuffleButton.setVisibility(View.VISIBLE);
+            resetButton.setVisibility(View.VISIBLE);
+            canPlay = true;
+        }
         initializeTable(); // after puzzle.start(dim)
         resetTiles();
 
@@ -104,7 +111,7 @@ public class PuzzleActivity extends Activity implements View.OnClickListener {
         tableLayout.invalidate();
     }
 
-    public void initializeAll() {
+    public Boolean initializeAll() {
         // Getting the screen size of the device,
         if (Build.VERSION.SDK_INT >= 13) {
             Display display = getWindowManager().getDefaultDisplay();
@@ -122,19 +129,12 @@ public class PuzzleActivity extends Activity implements View.OnClickListener {
             Log.d("TEST", "bundle is not null");
             resId = bundle.getInt("resId");
             dim = bundle.getInt("dim");
+            return true;
 
         } else {
             Log.d("TEST", "bundle is null");
+            return false;
         }
-
-//        try {
-//            bmp = BitmapFactory.decodeResource(getResources(), resId);
-//            bmp = Bitmap.createScaledBitmap(bmp, scrHeight, scrHeight, true);
-//            iv.setImageBitmap(bmp);
-//
-//        } catch (Exception e) {
-//            Log.d("TEST", "<><> Failed setting image");
-//        }
 
     }
 
@@ -319,8 +319,14 @@ public class PuzzleActivity extends Activity implements View.OnClickListener {
     }
 
     @Override
-    public void onClick(View v) {
+    protected void onStop() {
+        super.onStop();
+        savePuzzle();
+    }
 
+    @Override
+    public void onClick(View v) {
+//        savePuzzle();
         if (v.getId() == R.id.buttonShuffle) {
             // show win activity
             doShuffle(100);
@@ -356,6 +362,9 @@ public class PuzzleActivity extends Activity implements View.OnClickListener {
 
     private void goToWin() {
         canFinish = true;
+        saveFirstRun(true);
+        clearPreference();
+
         final Intent i = new Intent(this, WinActivity.class);
         Bundle bundle = new Bundle();
         bundle.putInt("dim", dim);
@@ -413,11 +422,71 @@ public class PuzzleActivity extends Activity implements View.OnClickListener {
         resetTiles();
     }
 
-    public void saveFirstRun(){
+    public void saveFirstRun(Boolean b){
         SharedPreferences prefs = getSharedPreferences("mainpref", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean("firstRun", false);
+        editor.putBoolean("firstRun", b);
         editor.commit();
 
     }
+    public boolean savePuzzle() {
+        SharedPreferences prefs = this.getSharedPreferences("puzzlepref", MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt("dim", puzzle.dim);
+        int counter = 0;
+        Log.d("TEST","DIM IN SAVE: "+ dim);
+        for(int i=0;i < dim;i++){
+            for (int j=0; j < dim; j++ ){
+                editor.putInt("p" + counter, puzzle.puzzleArray[i][j]);
+                counter++;
+            }
+        }
+        editor.putInt("resId", resId);
+        editor.putInt("row0", puzzle.row0);
+        editor.putInt("col0", puzzle.col0);
+        editor.putInt("clickCounter", clickCounter);
+        return editor.commit();
+    }
+
+    public boolean loadPuzzle() {
+        int savedDim;
+        int savedRow0;
+        int savedCol0;
+        int savedClickCounter;
+        int[] array;
+
+        SharedPreferences prefs = this.getSharedPreferences("puzzlepref",MODE_PRIVATE);
+        if (prefs.contains("dim")) {
+            savedDim = prefs.getInt("dim", MODE_PRIVATE);
+            savedClickCounter = prefs.getInt("clickCounter", MODE_PRIVATE);
+            savedRow0 = prefs.getInt("row0", MODE_PRIVATE);
+            savedCol0 = prefs.getInt("col0", MODE_PRIVATE);
+            clickCounter = savedClickCounter;
+            resId = prefs.getInt("resId", MODE_PRIVATE);
+            array = new int[savedDim * savedDim];
+
+            for (int i = 0; i < savedDim * savedDim; i++)
+                array[i] = prefs.getInt("p" + i, MODE_PRIVATE);
+
+            Log.d("TEST", "savedDim:" + savedDim);
+            Log.d("TEST", "savedRow0:" + savedRow0);
+
+            puzzle.setPuzzle(savedDim, savedRow0, savedCol0, array);
+            dim = savedDim;
+            resetCount(clickCounter);
+            Log.d("TEST", "" + puzzle.row0);
+            Log.d("TEST", "" + savedRow0);
+
+            return true;
+        }
+        return false;
+    }
+
+    public void clearPreference(){
+        SharedPreferences prefs = this.getSharedPreferences("puzzlepref", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.clear();
+        editor.commit();
+    }
+
 }
