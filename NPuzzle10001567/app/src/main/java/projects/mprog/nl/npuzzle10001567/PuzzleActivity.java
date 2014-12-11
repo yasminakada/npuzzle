@@ -266,8 +266,7 @@ public class PuzzleActivity extends Activity implements View.OnClickListener {
 
                     canFinish = true;
                     startActivity(i);
-
-                    break;
+                    return false;
             }
             canPlay = false;
             shuffleButton.setVisibility(View.INVISIBLE);
