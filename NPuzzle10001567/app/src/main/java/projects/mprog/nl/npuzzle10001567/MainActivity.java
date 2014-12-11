@@ -84,7 +84,7 @@ public class MainActivity extends Activity{
 
     public Boolean load(){
         SharedPreferences prefs = this.getSharedPreferences("mainpref", Context.MODE_PRIVATE);
-//        clearPreference();
+        clearPreference();
 
         if (prefs.contains("firstRun")){
         Boolean wasRunBefore = prefs.getBoolean("firstRun",true);

@@ -40,21 +40,28 @@ public class BitmapConstruct {
     }
 
     public static int calculateInSampleSize(
-            BitmapFactory.Options options, int reqWidth, int reqHeight) {
+            BitmapFactory.Options options, int reqDim) {
         // Raw height and width of image
         final int height = options.outHeight;
         final int width = options.outWidth;
         int inSampleSize = 1;
+        int dim;
 
-        if (height > reqHeight || width > reqWidth) {
+        if (height >= width){
+            dim = width;
+        }else{
+            dim = height;
+        }
 
-            final int halfHeight = height / 2;
-            final int halfWidth = width / 2;
+        if (dim > reqDim) {
+
+//            final int halfHeight = height / 2;
+//            final int halfWidth = width / 2;
+            final int halfDim = dim /2;
 
             // Calculate the largest inSampleSize value that is a power of 2 and keeps both
             // height and width larger than the requested height and width.
-            while ((halfHeight / inSampleSize) > reqHeight
-                    && (halfWidth / inSampleSize) > reqWidth) {
+            while ((halfDim / inSampleSize) > reqDim) {
                 inSampleSize *= 2;
             }
         }
@@ -62,8 +69,7 @@ public class BitmapConstruct {
         return inSampleSize;
     }
 
-    public static Bitmap decodeSampledBitmapFromResource(Resources res, int resId,
-                                                         int reqWidth, int reqHeight) {
+    public static Bitmap decodeSampledBitmapFromResource(Resources res, int resId, int reqDim) {
 
         // First decode with inJustDecodeBounds=true to check dimensions
         final BitmapFactory.Options options = new BitmapFactory.Options();
@@ -71,7 +77,7 @@ public class BitmapConstruct {
         BitmapFactory.decodeResource(res, resId, options);
 
         // Calculate inSampleSize
-        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+        options.inSampleSize = calculateInSampleSize(options, reqDim);
 
         // Decode bitmap with inSampleSize set
         options.inJustDecodeBounds = false;

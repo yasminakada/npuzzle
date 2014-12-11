@@ -27,6 +27,7 @@ public class ImagepickActivity extends Activity implements OnClickListener{
     int dim;
     int scrWidth;
     int scrHeight;
+    Bitmap[] allBitmaps = null;
     Boolean canFinish = false;
 
     Double smallRatio = 0.2;
@@ -44,6 +45,7 @@ public class ImagepickActivity extends Activity implements OnClickListener{
             display.getSize(size);
             scrWidth = size.x;
             scrHeight = size.y;
+            Log.d("Test", "w-h : " + scrWidth + "-" + scrHeight);
         }else{
             Display display = getWindowManager().getDefaultDisplay();
             scrWidth = display.getWidth();
@@ -61,13 +63,21 @@ public class ImagepickActivity extends Activity implements OnClickListener{
     @Override
     protected void onPause() {
         super.onPause();
+        for (int i=0; i<allBitmaps.length;i++){
+            if (allBitmaps[i] != null) allBitmaps[i].recycle();
+        }
         if (canFinish) finish();
+
     }
 
     public void setAll(){
         int counter = 0;
         int sizeInDp = 150;
-        int imgDim = BitmapConstruct.dpToPx(sizeInDp);
+//        int imgDim = BitmapConstruct.dpToPx(sizeInDp);
+        int imgDim = scrWidth/4;
+        int maxImages = 12;
+        Bitmap bitmap = null;
+        allBitmaps = new Bitmap[maxImages];
 
         LinearLayout LL = (LinearLayout) findViewById(R.id.puzzleContainer);
         LinearLayout subLL = new LinearLayout(this);
@@ -85,8 +95,18 @@ public class ImagepickActivity extends Activity implements OnClickListener{
 
             if (resId !=0) {
                 try{
-                    Bitmap bitmap = BitmapFactory.decodeResource(getResources(),resId);
+//                    BitmapFactory.Options options = new BitmapFactory.Options();
+//                    options.inJustDecodeBounds = true;
+//                    BitmapFactory.decodeResource(getResources(), resId, options);
+//                    int imageHeight = options.outHeight;
+//                    int imageWidth = options.outWidth;
+//                    String imageType = options.outMimeType;
+
+                    bitmap = BitmapConstruct.decodeSampledBitmapFromResource(getResources(),resId,imgDim);
                     bitmap = BitmapConstruct.scaledBitmap(bitmap, imgDim);
+
+//                    Bitmap bitmap = BitmapFactory.decodeResource(getResources(),resId);
+//                    bitmap = BitmapConstruct.scaledBitmap(bitmap, imgDim);
 
                     ImageButton button = new ImageButton(this);
                     button.setId(counter);
@@ -95,6 +115,9 @@ public class ImagepickActivity extends Activity implements OnClickListener{
                     button.setImageBitmap(bitmap);
                     subLL.addView(button);
                     mapIdToRes[counter] = resId;
+                    allBitmaps[counter] = bitmap;
+
+
                 }catch (OutOfMemoryError e) {
                     e.printStackTrace();
                     Log.d("TEST", "##NOT ALL IMAGES COULD BE BITMAPPED, too little memory");
@@ -107,7 +130,7 @@ public class ImagepickActivity extends Activity implements OnClickListener{
             }
 
             counter++;
-            if (counter > 12){
+            if (counter > maxImages){
                 Log.d("TEST", "##End while loop, no more than 12 pictures");
                 break;
             }
