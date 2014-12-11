@@ -165,9 +165,13 @@ public class PuzzleActivity extends Activity implements View.OnClickListener {
 
     public void initializeTable() {
         int counter = 1;
-        bmp = BitmapFactory.decodeResource(getResources(), resId);
+
+//        bmp = BitmapFactory.decodeResource(getResources(), resId);
+
         double resizeWidth = 0.8 * scrWidth;
         int newWidth = (int) resizeWidth;
+
+        bmp = BitmapConstruct.decodeSampledBitmapFromResource(getResources(),resId,newWidth);
         bmp = BitmapConstruct.scaledBitmap(bmp, newWidth);
         tiles = devideBitmap(bmp, dim, newWidth);
 
@@ -314,6 +318,7 @@ public class PuzzleActivity extends Activity implements View.OnClickListener {
     @Override
     protected void onPause() {
         super.onPause();
+        Log.d("TEST", "canFinish? " + canFinish);
         if (canFinish) finish();
     }
 

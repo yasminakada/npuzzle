@@ -67,7 +67,6 @@ public class ImagepickActivity extends Activity implements OnClickListener{
             if (allBitmaps[i] != null) allBitmaps[i].recycle();
         }
         if (canFinish) finish();
-
     }
 
     public void setAll(){
