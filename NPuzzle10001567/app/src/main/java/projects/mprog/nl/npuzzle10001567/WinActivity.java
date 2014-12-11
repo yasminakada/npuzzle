@@ -1,56 +1,51 @@
 package projects.mprog.nl.npuzzle10001567;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 public class WinActivity extends Activity implements View.OnClickListener{
 
-    int dim = 3;
+    int dim = 4; // Default dimensions 4x4.
     int moves;
-    int imageId;
+    int resId;
     boolean canFinish = false;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_win);
 
+        // Retrieve data from intent.
         Bundle bundle = getIntent().getExtras();
         if (bundle != null){
             dim = bundle.getInt("dim");
             moves = bundle.getInt("moves");
-            imageId = bundle.getInt("image");
+            resId = bundle.getInt("image");
         }
 
-
+        // Show number of moves on the screen
         TextView movesDone = (TextView) findViewById(R.id.textView4);
         movesDone.setText("You have completed the game in "+ moves + " moves.");
 
+        // Show image of the puzzle.
+        int imageDim = BitmapConstruct.dpToPx(500);
         ImageView iv = (ImageView) findViewById(R.id.imageView);
-        int imageDim = BitmapConstruct.dpToPx(400);
-
-        Bitmap bmp = BitmapFactory.decodeResource(getResources(),imageId);
+        Bitmap bmp = BitmapConstruct.decodeSampledBitmapFromResource(getResources(),resId,imageDim);
         bmp = BitmapConstruct.scaledBitmap(bmp,imageDim);
         iv.setImageBitmap(bmp);
 
+        // Set button to pick new image.
         Button button = (Button) findViewById(R.id.buttonPickImage);
         button.setOnClickListener(this);
-
     }
 
     @Override
@@ -78,7 +73,7 @@ public class WinActivity extends Activity implements View.OnClickListener{
     @Override
     public void onClick(View v) {
         if (v.getId()== R.id.buttonPickImage){
-            canFinish = true;
+            canFinish = true; // WinActivity may be destroyed when paused.
             Intent i = new Intent(this,ImagepickActivity.class);
             Bundle bundle = new Bundle();
             bundle.putInt("dim",dim);

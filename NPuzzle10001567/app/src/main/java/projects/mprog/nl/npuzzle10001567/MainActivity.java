@@ -16,16 +16,17 @@ import android.widget.Button;
 public class MainActivity extends Activity{
     Thread timer;
     Boolean firstRun = true;
+    // true when it is the first time the app was run.
+    // When puzzle is started, this will become false.
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Log.d("TEST", "FR: " + firstRun);
+        // true when it is the first time the app was run.
+        // When puzzle is started, this will become false.
         firstRun = load();
-        Log.d("TEST", "FR: " + firstRun);
-
         timer = new Thread(){
             public void run(){
                 try{
@@ -35,6 +36,8 @@ public class MainActivity extends Activity{
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            // first time run: give player choices
+                            // not first time: go to puzzle, retrieve saved puzzle.
                             if (firstRun) {
                                 goToLevel();
                             }else{
@@ -53,7 +56,7 @@ public class MainActivity extends Activity{
         };timer.start();
     }
 
-
+    // Will always finish when the app is closed on startup.
     @Override
     protected void onPause() {
         super.onPause();
@@ -82,10 +85,10 @@ public class MainActivity extends Activity{
         return super.onOptionsItemSelected(item);
     }
 
+    // Retrieves information on if the app has been run before.
+    // Should be inserted in Boolean firstStart of this Main class.
     public Boolean load(){
         SharedPreferences prefs = this.getSharedPreferences("mainpref", Context.MODE_PRIVATE);
-        clearPreference();
-
         if (prefs.contains("firstRun")){
         Boolean wasRunBefore = prefs.getBoolean("firstRun",true);
         return wasRunBefore;
@@ -94,8 +97,15 @@ public class MainActivity extends Activity{
         return true;
     }
 
+    // clears saved data on if the app is run before. Was needed for debugging mainly.
+    public void clearPreference(){
+        SharedPreferences prefs = this.getSharedPreferences("mainpref", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.clear();
+        editor.commit();
+    }
+
     public void goToLevel() {
-        // OWN
         Intent i = new Intent(this, LevelActivity.class);
         startActivity(i);
     }
@@ -105,10 +115,5 @@ public class MainActivity extends Activity{
         startActivity(i);
     }
 
-    public void clearPreference(){
-        SharedPreferences prefs = this.getSharedPreferences("mainpref", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.clear();
-        editor.commit();
-    }
+
 }
