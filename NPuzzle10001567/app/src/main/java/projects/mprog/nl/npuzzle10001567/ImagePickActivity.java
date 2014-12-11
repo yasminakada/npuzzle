@@ -45,7 +45,6 @@ public class ImagepickActivity extends Activity implements OnClickListener{
             display.getSize(size);
             scrWidth = size.x;
             scrHeight = size.y;
-            Log.d("Test", "w-h : " + scrWidth + "-" + scrHeight);
         }else{
             Display display = getWindowManager().getDefaultDisplay();
             scrWidth = display.getWidth();

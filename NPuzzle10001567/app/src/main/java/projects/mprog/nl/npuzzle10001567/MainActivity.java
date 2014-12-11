@@ -31,7 +31,6 @@ public class MainActivity extends Activity{
             public void run(){
                 try{
                     sleep(3000);
-                    Log.d("TEST","SLEEP ENDED");
 
                     runOnUiThread(new Runnable() {
                         @Override
@@ -49,7 +48,6 @@ public class MainActivity extends Activity{
 
                 }catch(InterruptedException e){
                     e.printStackTrace();
-                    Log.d("TEST","CAUGHT EXCPETION");
                 }
             }
 
@@ -93,7 +91,6 @@ public class MainActivity extends Activity{
         Boolean wasRunBefore = prefs.getBoolean("firstRun",true);
         return wasRunBefore;
         }
-        Log.d("TEST","out if");
         return true;
     }
 

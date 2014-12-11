@@ -97,7 +97,7 @@ public class PuzzleActivity extends Activity implements View.OnClickListener {
             canPlay = true;
         }
         initializeTable(); // Build views to display puzzle.
-//        resetTiles();
+        resetTiles(); // Shows the tiles.
 
         TableLayout tableLayout = (TableLayout) findViewById(R.id.tablelayout);
         tableLayout.invalidate();
@@ -381,7 +381,6 @@ public class PuzzleActivity extends Activity implements View.OnClickListener {
 
                 } catch (InterruptedException e) {
                     e.printStackTrace();
-                    Log.d("TEST", "CAUGHT EXCPETION");
                 }
             }
 
@@ -392,11 +391,9 @@ public class PuzzleActivity extends Activity implements View.OnClickListener {
                 try {
                     canPlay = false;
                     sleep(2000);
-                    Log.d("TEST", "SLEEP ENDED");
 
                 } catch (InterruptedException e) {
                     e.printStackTrace();
-                    Log.d("TEST", "CAUGHT EXCPETION");
                 } finally {
                     startActivity(i);
                 }
