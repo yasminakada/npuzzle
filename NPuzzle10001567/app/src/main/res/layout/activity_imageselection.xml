@@ -6,7 +6,7 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:orientation="vertical"
     android:gravity="center_horizontal"
-    tools:context="projects.mprog.nl.npuzzle10001567.ImagepickActivity">
+    tools:context="projects.mprog.nl.npuzzle10001567.ImageSelectionActivity">
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="0dp"

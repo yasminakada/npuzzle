@@ -2,16 +2,12 @@ package projects.mprog.nl.npuzzle10001567;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 
@@ -94,7 +90,7 @@ public class LevelActivity extends Activity implements OnClickListener {
     public void goToImages(){
         Bundle lev = new Bundle();
         lev.putInt("dim", dim);
-        Intent i = new Intent(this,ImagepickActivity.class);
+        Intent i = new Intent(this,ImageSelectionActivity.class);
         i.putExtras(lev);
         startActivity(i);
     }

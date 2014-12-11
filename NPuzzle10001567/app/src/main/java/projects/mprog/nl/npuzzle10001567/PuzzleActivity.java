@@ -8,7 +8,6 @@ import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -250,7 +249,7 @@ public class PuzzleActivity extends Activity implements View.OnClickListener {
                     break;
                 case R.id.changeImage:
                     // Run ImagePickActivity and finish this activity.
-                    Intent i = new Intent(this, ImagepickActivity.class);
+                    Intent i = new Intent(this, ImageSelectionActivity.class);
                     Bundle bundle = new Bundle();
                     bundle.putInt("dim", dim);
                     i.putExtras(bundle);

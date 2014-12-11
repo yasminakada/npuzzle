@@ -23,7 +23,7 @@
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name="projects.mprog.nl.npuzzle10001567.ImagepickActivity"
+            android:name=".ImageSelectionActivity"
             android:label="@string/title_activity_imagepick"
             android:screenOrientation="portrait" >
         </activity>

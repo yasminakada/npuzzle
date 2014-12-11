@@ -1,13 +1,9 @@
 package projects.mprog.nl.npuzzle10001567;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Point;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,12 +13,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 
-public class ImagepickActivity extends Activity implements OnClickListener{
+public class ImageSelectionActivity extends Activity implements OnClickListener{
 
     int dim;
     int scrWidth;
@@ -36,7 +31,7 @@ public class ImagepickActivity extends Activity implements OnClickListener{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_imagepick);
+        setContentView(R.layout.activity_imageselection);
 
         // Getting the screen size of the device,
         if (Build.VERSION.SDK_INT >= 13){

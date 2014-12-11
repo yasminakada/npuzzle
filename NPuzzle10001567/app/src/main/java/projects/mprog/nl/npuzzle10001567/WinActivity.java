@@ -74,7 +74,7 @@ public class WinActivity extends Activity implements View.OnClickListener{
     public void onClick(View v) {
         if (v.getId()== R.id.buttonPickImage){
             canFinish = true; // WinActivity may be destroyed when paused.
-            Intent i = new Intent(this,ImagepickActivity.class);
+            Intent i = new Intent(this,ImageSelectionActivity.class);
             Bundle bundle = new Bundle();
             bundle.putInt("dim",dim);
             i.putExtras(bundle);
