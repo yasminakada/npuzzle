@@ -15,7 +15,7 @@ Design choices
   Het zal de speler strafpunten opleveren, aangezien het spel niet eerlijk is gewonnen.
 - Shuffle is een knop en geen keuze in het menu. Hier is voor gekozen omdat dit gebruiksvriendelijker is.
   (Dit is een bewuste afwijking van de opdracht. Het betekent niet dat de kennis ontbrak om dit via het menu te doen)
-- Wanneer de speler een puzzle heeft gewonnen, word het de opgeslagen gamestate verwijderd.
+- Wanneer de speler een puzzle heeft gewonnen, word de opgeslagen gamestate verwijderd.
   Als de app wordt afgesloten en weer gestart, zal de speler weer de optie krijgen om een level en afbeelding te kiezen.
   Wordt de app niet afgesloten, kan de speler een nieuwe afbeelding kiezen en wordt een nieuw spel
   gestart met de vorige moeilijkheidsgraad.
