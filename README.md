@@ -1,8 +1,8 @@
 N-puzzle for android
 ====================
-Yasmina Kada
-10001567
-Minor Programmeren
+|| Yasmina Kada 
+|| 10001567
+|| Minor Programmeren ||
 
 Design choices
 --------------
