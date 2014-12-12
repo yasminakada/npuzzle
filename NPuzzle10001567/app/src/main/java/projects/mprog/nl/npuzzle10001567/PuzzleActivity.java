@@ -454,17 +454,17 @@ public class PuzzleActivity extends Activity implements View.OnClickListener {
         // Check if a game is saved by looking up if the dimensions are saved.
         // If there is no saved data, default game is played. (this never happens)
         if (prefs.contains("dim")) {
-            savedDim = prefs.getInt("dim", MODE_PRIVATE);
-            savedClickCounter = prefs.getInt("clickCounter", MODE_PRIVATE);
-            savedRow0 = prefs.getInt("row0", MODE_PRIVATE);
-            savedCol0 = prefs.getInt("col0", MODE_PRIVATE);
+            savedDim = prefs.getInt("dim", 0);
+            savedClickCounter = prefs.getInt("clickCounter", 0);
+            savedRow0 = prefs.getInt("row0", 0);
+            savedCol0 = prefs.getInt("col0", 0);
             clickCounter = savedClickCounter;
-            resId = prefs.getInt("resId", MODE_PRIVATE);
+            resId = prefs.getInt("resId", 0);
             array = new int[savedDim * savedDim];
 
             // Individual puzzle pieces are retrieved and inserted in an array.
             for (int i = 0; i < savedDim * savedDim; i++)
-                array[i] = prefs.getInt("p" + i, MODE_PRIVATE);
+                array[i] = prefs.getInt("p" + i, 0);
 
             // Set the puzzle back to saved gamestate.
             puzzle.setPuzzle(savedDim, savedRow0, savedCol0, array);
